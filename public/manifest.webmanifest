@@ -1,0 +1,17 @@
+{
+  "name": "Mechaura International FZE LLC",
+  "short_name": "Mechaura",
+  "description": "Industrial equipment, tools, and specialized brushes supplier in the UAE.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0B0C",
+  "theme_color": "#F59E0B",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
