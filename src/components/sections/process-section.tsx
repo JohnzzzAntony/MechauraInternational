@@ -4,9 +4,15 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { processSteps } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedProcessSteps } from "@/lib/content";
 
 export function ProcessSection() {
+  const hydrated = useHydrated();
+  const steps = useContentStore((s) => s.processSteps);
+  const list = hydrated ? steps : seedProcessSteps;
+
   return (
     <section
       id="process"
@@ -34,9 +40,9 @@ export function ProcessSection() {
             aria-hidden="true"
           />
 
-          {processSteps.map((step, idx) => (
+          {list.map((step, idx) => (
             <motion.div
-              key={step.number}
+              key={step.id}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}

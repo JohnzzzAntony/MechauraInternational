@@ -3,11 +3,14 @@
 import * as React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowUpRight, ArrowRight, Clock } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Button } from "@/components/ui/button";
-import { insights } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedInsights } from "@/lib/content";
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -19,6 +22,10 @@ function formatDate(iso: string) {
 }
 
 export function InsightsSection() {
+  const hydrated = useHydrated();
+  const items = useContentStore((s) => s.insights);
+  const list = hydrated ? items : seedInsights;
+
   return (
     <section
       id="insights"
@@ -47,25 +54,29 @@ export function InsightsSection() {
         </div>
 
         <div className="mt-14 grid gap-6 md:grid-cols-3">
-          {insights.map((post, idx) => (
+          {list.map((post, idx) => (
             <motion.article
-              key={post.title}
+              key={post.id}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.6, delay: idx * 0.12, ease: [0.16, 1, 0.3, 1] }}
               className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card transition-all hover:border-brand/40 hover:shadow-[0_20px_60px_-20px_var(--brand)]"
             >
-              {/* Visual */}
+              {/* Visual with real image */}
               <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-brand/15 via-card to-background">
-                <div className="absolute inset-0 bg-grid opacity-30" />
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent" />
                 <div className="absolute left-4 top-4">
                   <span className="rounded-full border border-border/60 bg-background/80 px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-brand backdrop-blur">
                     {post.category}
                   </span>
-                </div>
-                <div className="absolute bottom-4 right-4 font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
-                  Article {String(idx + 1).padStart(2, "0")}
                 </div>
               </div>
 

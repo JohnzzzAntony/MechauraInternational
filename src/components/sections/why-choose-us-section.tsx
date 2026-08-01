@@ -5,9 +5,15 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Icon, type IconName } from "@/components/icon";
-import { whyChooseUs } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedWhyChooseUs } from "@/lib/content";
 
 export function WhyChooseUsSection() {
+  const hydrated = useHydrated();
+  const items = useContentStore((s) => s.whyChooseUs);
+  const list = hydrated ? items : seedWhyChooseUs;
+
   return (
     <section
       id="why-us"
@@ -54,9 +60,9 @@ export function WhyChooseUsSection() {
 
           <div className="lg:col-span-7">
             <div className="grid gap-4 sm:grid-cols-2">
-              {whyChooseUs.map((item, idx) => (
+              {list.map((item, idx) => (
                 <motion.div
-                  key={item.title}
+                  key={item.id}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-80px" }}

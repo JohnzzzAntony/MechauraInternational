@@ -2,13 +2,20 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Phone } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Button } from "@/components/ui/button";
-import { company } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { ctaImages, seedCompany } from "@/lib/content";
 
 export function CTASection() {
+  const hydrated = useHydrated();
+  const company = useContentStore((s) => s.company);
+  const c = hydrated ? company : seedCompany;
+
   return (
     <section className="relative scroll-mt-20 border-t border-border/40 py-24 sm:py-32">
       <Container size="full">
@@ -17,13 +24,20 @@ export function CTASection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-          className="relative isolate overflow-hidden rounded-3xl border border-brand/30 bg-gradient-to-br from-brand/10 via-card to-background p-8 sm:p-12 lg:p-16"
+          className="relative isolate overflow-hidden rounded-3xl border border-brand/30 p-8 sm:p-12 lg:p-16"
         >
-          {/* Background grid */}
-          <div
-            className="pointer-events-none absolute inset-0 -z-10 bg-grid opacity-40"
-            aria-hidden="true"
-          />
+          {/* Background image */}
+          <div className="absolute inset-0 -z-10" aria-hidden="true">
+            <Image
+              src={ctaImages.background}
+              alt=""
+              fill
+              sizes="100vw"
+              className="object-cover opacity-40"
+            />
+            <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/60 to-background/90" />
+            <div className="absolute inset-0 bg-grid opacity-30" />
+          </div>
           {/* Glow */}
           <div
             className="pointer-events-none absolute -right-20 -top-20 -z-10 h-[400px] w-[400px] rounded-full bg-brand/20 blur-[100px]"
@@ -53,9 +67,9 @@ export function CTASection() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="xl">
-                <a href={`tel:${company.phoneRaw}`}>
+                <a href={`tel:${c.phoneRaw}`}>
                   <Phone className="size-4" />
-                  {company.phone}
+                  {c.phone}
                 </a>
               </Button>
             </div>

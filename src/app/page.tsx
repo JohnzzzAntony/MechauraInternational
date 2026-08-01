@@ -1,3 +1,7 @@
+"use client";
+
+import * as React from "react";
+import { useSearchParams } from "next/navigation";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ScrollProgress } from "@/components/scroll-progress";
@@ -14,8 +18,16 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { InsightsSection } from "@/components/sections/insights-section";
 import { CTASection } from "@/components/sections/cta-section";
 import { ContactSection } from "@/components/sections/contact-section";
+import { AdminPanel } from "@/components/admin/admin-panel";
 
-export default function Home() {
+function HomeContent() {
+  const params = useSearchParams();
+  const isAdmin = params.get("admin") === "1";
+
+  if (isAdmin) {
+    return <AdminPanel />;
+  }
+
   return (
     <>
       <ScrollProgress />
@@ -37,5 +49,13 @@ export default function Home() {
       <SiteFooter />
       <MobileCTA />
     </>
+  );
+}
+
+export default function Home() {
+  return (
+    <React.Suspense fallback={null}>
+      <HomeContent />
+    </React.Suspense>
   );
 }

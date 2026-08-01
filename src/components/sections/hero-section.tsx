@@ -2,11 +2,15 @@
 
 import * as React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Counter } from "@/components/ui/counter";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { heroImages, seedStats } from "@/lib/content";
 
 export function HeroSection() {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -19,6 +23,10 @@ export function HeroSection() {
   const contentY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
 
+  const hydrated = useHydrated();
+  const storeStats = useContentStore((s) => s.heroStats);
+  const stats = hydrated && storeStats.length ? storeStats : seedStats;
+
   return (
     <section
       ref={ref}
@@ -26,14 +34,25 @@ export function HeroSection() {
       className="relative isolate overflow-hidden bg-background pt-28 lg:pt-36"
       aria-label="Hero"
     >
-      {/* Animated background layers */}
+      {/* Background image with parallax + overlays */}
       <motion.div
         style={{ y: bgY }}
         className="pointer-events-none absolute inset-0 -z-10"
         aria-hidden="true"
       >
-        {/* Grid */}
-        <div className="absolute inset-0 bg-grid bg-grid-fade opacity-60" />
+        <Image
+          src={heroImages.background}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-30"
+        />
+        {/* Dark gradient overlay for legibility */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/40 to-transparent" />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 bg-grid bg-grid-fade opacity-50" />
         {/* Radial brand glow */}
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-brand/20 blur-[120px] animate-pulse-glow" />
         <div className="absolute top-1/2 right-0 h-[400px] w-[400px] rounded-full bg-brand/10 blur-[100px]" />
@@ -133,14 +152,9 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
             className="mt-20 grid w-full max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/60 bg-border/60 sm:grid-cols-4"
           >
-            {[
-              { value: 6, suffix: "+", label: "Years Supplying" },
-              { value: 500, suffix: "+", label: "B2B Clients" },
-              { value: 1200, suffix: "+", label: "SKUs In Catalog" },
-              { value: 98, suffix: "%", label: "On-Time Rate" },
-            ].map((stat) => (
+            {stats.map((stat) => (
               <div
-                key={stat.label}
+                key={stat.id}
                 className="bg-background/80 backdrop-blur-sm px-4 py-6 text-center sm:px-6"
               >
                 <div className="font-display text-3xl font-semibold text-foreground sm:text-4xl">

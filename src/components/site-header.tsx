@@ -3,14 +3,26 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { Menu, X, Moon, Sun, ArrowUpRight, Phone } from "lucide-react";
+import { Menu, X, Moon, Sun, ArrowUpRight, Phone, Settings } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetClose } from "@/components/ui/sheet";
 import { useTheme } from "next-themes";
-import { navigation, company } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedCompany } from "@/lib/content";
 import { cn } from "@/lib/utils";
+
+const navigation = [
+  { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Products", href: "#products" },
+  { label: "Industries", href: "#industries" },
+  { label: "Why Us", href: "#why-us" },
+  { label: "Insights", href: "#insights" },
+  { label: "Contact", href: "#contact" },
+];
 
 export function SiteHeader() {
   const [scrolled, setScrolled] = React.useState(false);
@@ -18,6 +30,10 @@ export function SiteHeader() {
   const { theme, resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
   const { scrollY } = useScroll();
+
+  const hydrated = useHydrated();
+  const company = useContentStore((s) => s.company);
+  const c = hydrated ? company : seedCompany;
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setScrolled(latest > 24);
@@ -66,6 +82,20 @@ export function SiteHeader() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          {/* Admin entry */}
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            aria-label="Open admin panel"
+            title="Admin Panel"
+            className="text-muted-foreground hover:text-brand"
+          >
+            <Link href="/?admin=1">
+              <Settings className="size-4" />
+            </Link>
+          </Button>
+
           <Button
             variant="ghost"
             size="icon"
@@ -157,11 +187,11 @@ export function SiteHeader() {
                     </SheetClose>
                   </Button>
                   <a
-                    href={`tel:${company.phoneRaw}`}
+                    href={`tel:${c.phoneRaw}`}
                     className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <Phone className="size-4" />
-                    {company.phone}
+                    {c.phone}
                   </a>
                 </div>
               </div>

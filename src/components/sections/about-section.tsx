@@ -2,15 +2,24 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, MapPin, Building2, Globe2 } from "lucide-react";
+import { ArrowUpRight, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Icon, type IconName } from "@/components/icon";
 import { Button } from "@/components/ui/button";
-import { company, values } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { aboutImages, seedCompany, seedValues } from "@/lib/content";
 
 export function AboutSection() {
+  const hydrated = useHydrated();
+  const company = useContentStore((s) => s.company);
+  const values = useContentStore((s) => s.values);
+  const c = hydrated ? company : seedCompany;
+  const v = hydrated ? values : seedValues;
+
   return (
     <section
       id="about"
@@ -33,12 +42,12 @@ export function AboutSection() {
               }
               description={
                 <>
-                  Mechaura International FZE LLC is a UAE-based industrial supplier
-                  committed to delivering reliable products, competitive pricing,
-                  and timely service. We support a wide spectrum of industries —
-                  from manufacturing and construction to oil &amp; gas and
-                  facility management — with quality-tested industrial equipment
-                  and customized solutions engineered for the realities of
+                  {c.name} is a UAE-based industrial supplier committed to
+                  delivering reliable products, competitive pricing, and timely
+                  service. We support a wide spectrum of industries — from
+                  manufacturing and construction to oil &amp; gas and facility
+                  management — with quality-tested industrial equipment and
+                  customized solutions engineered for the realities of
                   continuous-duty operation.
                 </>
               }
@@ -52,9 +61,9 @@ export function AboutSection() {
               className="mt-10 grid gap-4 sm:grid-cols-3"
             >
               {[
-                { icon: "MapPin" as const, label: "Headquarters", value: "Ajman Free Zone, UAE" },
-                { icon: "Building2" as const, label: "Legal Entity", value: "FZE LLC · Est. 2019" },
-                { icon: "Globe2" as const, label: "Service Region", value: "UAE & GCC" },
+                { label: "Headquarters", value: c.headquarters },
+                { label: "Legal Entity", value: `FZE LLC · Est. ${c.foundedYear}` },
+                { label: "Service Region", value: "UAE & GCC" },
               ].map((item) => (
                 <div
                   key={item.label}
@@ -85,38 +94,58 @@ export function AboutSection() {
               </Button>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <MapPin className="size-4 text-brand" />
-                {company.headquarters}
+                {c.headquarters}
               </div>
             </motion.div>
           </div>
 
-          {/* Right — value cards */}
+          {/* Right — image + value cards */}
           <div className="lg:col-span-5">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="relative mb-6 aspect-[4/3] overflow-hidden rounded-2xl border border-border/60"
+            >
+              <Image
+                src={aboutImages.warehouse}
+                alt="Mechaura International warehouse with organized industrial inventory"
+                fill
+                sizes="(max-width: 1024px) 100vw, 40vw"
+                className="object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-transparent" />
+              <div className="absolute bottom-4 left-4 rounded-full border border-border/60 bg-background/80 px-3 py-1.5 text-xs font-medium text-foreground backdrop-blur">
+                Ajman Free Zone Facility
+              </div>
+            </motion.div>
+
             <motion.div
               initial={{ opacity: 0, x: 24 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true, margin: "-100px" }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="grid gap-4"
+              className="grid gap-3"
             >
-              {values.map((value, idx) => (
+              {v.map((value, idx) => (
                 <motion.div
-                  key={value.title}
+                  key={value.id}
                   initial={{ opacity: 0, y: 16 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true, margin: "-100px" }}
                   transition={{ duration: 0.5, delay: idx * 0.08 }}
-                  className="group relative overflow-hidden rounded-2xl border border-border/60 bg-card/40 p-5 transition-all hover:border-brand/40 hover:bg-card/60"
+                  className="group relative overflow-hidden rounded-xl border border-border/60 bg-card/40 p-4 transition-all hover:border-brand/40 hover:bg-card/60"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand ring-1 ring-brand/20 transition-transform group-hover:scale-105">
+                  <div className="flex items-start gap-3">
+                    <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-brand/10 text-brand ring-1 ring-brand/20 transition-transform group-hover:scale-105">
                       <Icon name={value.icon as IconName} className="size-5" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-display text-base font-semibold text-foreground">
+                      <h3 className="font-display text-sm font-semibold text-foreground">
                         {value.title}
                       </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                         {value.description}
                       </p>
                     </div>

@@ -5,9 +5,15 @@ import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Icon, type IconName } from "@/components/icon";
-import { industries } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedIndustries } from "@/lib/content";
 
 export function IndustriesSection() {
+  const hydrated = useHydrated();
+  const industries = useContentStore((s) => s.industries);
+  const list = hydrated ? industries : seedIndustries;
+
   return (
     <section
       id="industries"
@@ -29,9 +35,9 @@ export function IndustriesSection() {
         />
 
         <div className="grid gap-px overflow-hidden rounded-2xl border border-border/60 bg-border/60 sm:grid-cols-2 lg:grid-cols-3">
-          {industries.map((industry, idx) => (
+          {list.map((industry, idx) => (
             <motion.div
-              key={industry.slug}
+              key={industry.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}

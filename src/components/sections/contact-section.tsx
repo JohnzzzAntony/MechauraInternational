@@ -24,7 +24,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { company, products } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedCompany, seedProducts } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 const contactSchema = z.object({
@@ -51,6 +53,12 @@ const contactSchema = z.object({
 type ContactFormValues = z.infer<typeof contactSchema>;
 
 export function ContactSection() {
+  const hydrated = useHydrated();
+  const company = useContentStore((s) => s.company);
+  const products = useContentStore((s) => s.products);
+  const c = hydrated ? company : seedCompany;
+  const p = hydrated ? products : seedProducts;
+
   const [submitted, setSubmitted] = React.useState(false);
   const [submitError, setSubmitError] = React.useState<string | null>(null);
 
@@ -94,25 +102,25 @@ export function ContactSection() {
     {
       icon: MapPin,
       label: "Address",
-      value: company.headquarters,
+      value: c.headquarters,
       href: "https://www.google.com/maps/search/?api=1&query=Ajman+Free+Zone+Ajman+UAE",
     },
     {
       icon: Phone,
       label: "Phone",
-      value: company.phone,
-      href: `tel:${company.phoneRaw}`,
+      value: c.phone,
+      href: `tel:${c.phoneRaw}`,
     },
     {
       icon: Mail,
       label: "Email",
-      value: company.email,
-      href: `mailto:${company.email}`,
+      value: c.email,
+      href: `mailto:${c.email}`,
     },
     {
       icon: Clock,
       label: "Working Hours",
-      value: company.hours,
+      value: c.hours,
     },
   ];
 
@@ -187,10 +195,10 @@ export function ContactSection() {
               </span>
               <div className="flex gap-2">
                 {[
-                  { icon: Linkedin, href: company.social.linkedin, label: "LinkedIn" },
-                  { icon: Instagram, href: company.social.instagram, label: "Instagram" },
-                  { icon: Facebook, href: company.social.facebook, label: "Facebook" },
-                  { icon: MessageCircle, href: company.social.whatsapp, label: "WhatsApp" },
+                  { icon: Linkedin, href: c.social.linkedin, label: "LinkedIn" },
+                  { icon: Instagram, href: c.social.instagram, label: "Instagram" },
+                  { icon: Facebook, href: c.social.facebook, label: "Facebook" },
+                  { icon: MessageCircle, href: c.social.whatsapp, label: "WhatsApp" },
                 ].map((s) => (
                   <a
                     key={s.label}
@@ -238,7 +246,7 @@ export function ContactSection() {
                     Inquiry received
                   </h3>
                   <p className="mt-2 max-w-md text-sm text-muted-foreground">
-                    Thank you for reaching out to Mechaura International. Our supply
+                    Thank you for reaching out to {c.shortName}. Our supply
                     desk will respond within one business day with technical guidance
                     and pricing.
                   </p>
@@ -305,9 +313,9 @@ export function ContactSection() {
                       <option value="" disabled>
                         Select a category (optional)
                       </option>
-                      {products.map((p) => (
-                        <option key={p.slug} value={p.name}>
-                          {p.name}
+                      {p.map((prod) => (
+                        <option key={prod.id} value={prod.name}>
+                          {prod.name}
                         </option>
                       ))}
                       <option value="Other">Other / Not listed</option>
@@ -334,8 +342,8 @@ export function ContactSection() {
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-xs text-muted-foreground">
-                      By submitting, you agree to be contacted by Mechaura
-                      International regarding your inquiry.
+                      By submitting, you agree to be contacted by {c.shortName}
+                      regarding your inquiry.
                     </p>
                     <Button
                       type="submit"

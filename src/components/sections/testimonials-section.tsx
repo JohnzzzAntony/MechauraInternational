@@ -5,9 +5,15 @@ import { motion } from "framer-motion";
 import { Quote } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { testimonials } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedTestimonials } from "@/lib/content";
 
 export function TestimonialsSection() {
+  const hydrated = useHydrated();
+  const items = useContentStore((s) => s.testimonials);
+  const list = hydrated ? items : seedTestimonials;
+
   return (
     <section
       id="testimonials"
@@ -29,9 +35,9 @@ export function TestimonialsSection() {
         />
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {testimonials.map((t, idx) => (
+          {list.map((t, idx) => (
             <motion.figure
-              key={idx}
+              key={t.id}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}

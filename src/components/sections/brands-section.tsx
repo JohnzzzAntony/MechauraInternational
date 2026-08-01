@@ -4,11 +4,16 @@ import * as React from "react";
 import { motion } from "framer-motion";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { partnerBrands } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedPartnerBrands } from "@/lib/content";
 
 export function BrandsSection() {
+  const hydrated = useHydrated();
+  const brands = useContentStore((s) => s.partnerBrands);
+  const list = hydrated ? brands : seedPartnerBrands;
   // Duplicate for seamless marquee
-  const marqueeItems = [...partnerBrands, ...partnerBrands];
+  const marqueeItems = [...list, ...list];
 
   return (
     <section

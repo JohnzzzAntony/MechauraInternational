@@ -2,15 +2,22 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Check } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Icon, type IconName } from "@/components/icon";
 import { Button } from "@/components/ui/button";
-import { services } from "@/lib/site-data";
+import { useContentStore } from "@/lib/store";
+import { useHydrated } from "@/lib/use-hydrated";
+import { seedServices } from "@/lib/content";
 
 export function ServicesSection() {
+  const hydrated = useHydrated();
+  const services = useContentStore((s) => s.services);
+  const list = hydrated ? services : seedServices;
+
   return (
     <section
       id="services"
@@ -39,29 +46,39 @@ export function ServicesSection() {
         />
 
         <div className="grid gap-6 lg:grid-cols-3">
-          {services.map((service, idx) => (
+          {list.map((service, idx) => (
             <motion.article
-              key={service.number}
+              key={service.id}
               initial={{ opacity: 0, y: 28 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.6, delay: idx * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card p-6 transition-all duration-500 hover:border-brand/40 hover:shadow-[0_20px_60px_-20px_var(--brand)] sm:p-8"
+              className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-500 hover:border-brand/40 hover:shadow-[0_20px_60px_-20px_var(--brand)]"
             >
-              {/* Big number watermark */}
-              <span
-                className="pointer-events-none absolute -right-2 -top-4 font-display text-8xl font-bold text-foreground/[0.04] transition-colors duration-500 group-hover:text-brand/10"
-                aria-hidden="true"
-              >
-                {service.number}
-              </span>
-
-              <div className="relative">
-                <div className="flex size-14 items-center justify-center rounded-2xl bg-brand/10 text-brand ring-1 ring-brand/20 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                  <Icon name={service.icon as IconName} className="size-7" />
+              {/* Service image */}
+              <div className="relative aspect-[16/10] overflow-hidden">
+                <Image
+                  src={service.image}
+                  alt={service.title}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-card via-card/40 to-transparent" />
+                {/* Big number watermark */}
+                <span
+                  className="pointer-events-none absolute right-4 top-3 font-display text-7xl font-bold text-foreground/10 backdrop-blur-sm"
+                  aria-hidden="true"
+                >
+                  {service.number}
+                </span>
+                <div className="absolute bottom-3 left-4 flex size-12 items-center justify-center rounded-xl bg-brand text-brand-foreground shadow-lg shadow-brand/20 ring-1 ring-brand/30 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
+                  <Icon name={service.icon as IconName} className="size-6" />
                 </div>
+              </div>
 
-                <h3 className="mt-6 font-display text-xl font-semibold tracking-tight text-foreground">
+              <div className="flex flex-1 flex-col p-6 sm:p-7">
+                <h3 className="font-display text-xl font-semibold tracking-tight text-foreground">
                   {service.title}
                 </h3>
 
@@ -69,11 +86,7 @@ export function ServicesSection() {
                   {service.summary}
                 </p>
 
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground/80">
-                  {service.description}
-                </p>
-
-                <ul className="mt-6 space-y-2.5" aria-label={`${service.title} capabilities`}>
+                <ul className="mt-5 space-y-2" aria-label={`${service.title} capabilities`}>
                   {service.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2.5 text-sm">
                       <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand">
@@ -83,17 +96,20 @@ export function ServicesSection() {
                     </li>
                   ))}
                 </ul>
+
+                <div className="mt-auto pt-6">
+                  <Link
+                    href="#contact"
+                    className="group/link inline-flex items-center gap-2 text-sm font-medium text-brand transition-colors hover:text-brand/80"
+                  >
+                    Discuss your requirements
+                    <ArrowUpRight className="size-4 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
+                  </Link>
+                </div>
               </div>
 
-              <div className="relative mt-8 pt-6 border-t border-border/60">
-                <Link
-                  href="#contact"
-                  className="group/link inline-flex items-center gap-2 text-sm font-medium text-brand transition-colors hover:text-brand/80"
-                >
-                  Discuss your requirements
-                  <ArrowUpRight className="size-4 transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5" />
-                </Link>
-              </div>
+              {/* Hover gradient line */}
+              <span className="pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-gradient-to-r from-brand via-brand to-transparent transition-transform duration-500 group-hover:scale-x-100" />
             </motion.article>
           ))}
         </div>
