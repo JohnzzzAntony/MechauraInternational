@@ -15,6 +15,7 @@ RUN bun install --frozen-lockfile
 FROM deps AS prisma
 COPY prisma ./prisma/
 RUN bunx prisma generate
+RUN bun add -g prisma
 
 # Build the application (no DB env vars needed at build time)
 FROM base AS builder
