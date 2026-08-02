@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * /api/content/insights
  */
@@ -82,3 +83,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }
+

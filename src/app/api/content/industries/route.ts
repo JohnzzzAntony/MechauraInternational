@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * /api/content/industries
  */
@@ -80,3 +81,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Failed to delete industry" }, { status: 500 });
   }
 }
+

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * /api/content/products
  * GET    → All products ordered by `order`
@@ -91,3 +92,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Failed to delete product" }, { status: 500 });
   }
 }
+

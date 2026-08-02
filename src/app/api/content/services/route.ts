@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * /api/content/services
  * GET    → All services ordered by `order`
@@ -87,3 +88,4 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "Failed to delete service" }, { status: 500 });
   }
 }
+

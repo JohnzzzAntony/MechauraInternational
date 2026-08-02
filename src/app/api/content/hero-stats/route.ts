@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * /api/content/hero-stats
  * GET → All stats
@@ -44,3 +45,4 @@ export async function PUT(request: Request) {
     return NextResponse.json({ error: "Failed to update" }, { status: 500 });
   }
 }
+

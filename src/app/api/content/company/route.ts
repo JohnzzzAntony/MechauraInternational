@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * /api/content/company
  * GET  → Returns current company settings + partner brands
@@ -92,3 +93,4 @@ function toClient(row: any) {
     partnerBrands: row.partnerBrands,
   };
 }
+
