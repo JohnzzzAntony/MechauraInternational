@@ -50,5 +50,8 @@ USER nextjs
 
 EXPOSE 3000
 
-# Run db push at startup (has access to env vars), then start server
-CMD ["sh", "-c", "bunx prisma db push --accept-data-loss --skip-generate && node server.js"]
+# Run db push at startup (has access to env vars), then start server.
+# The db push is bounded by a timeout and its failure is ignored so that
+# the server always starts and can respond to health checks, even if the
+# database is unreachable or the push hangs/fails.
+CMD ["sh", "-c", "timeout 30 bunx prisma db push --accept-data-loss --skip-generate || true; exec node server.js"]
