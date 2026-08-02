@@ -132,13 +132,13 @@ export function HeroSection() {
             className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
           >
             <Button asChild variant="brand" size="xl" className="w-full sm:w-auto">
-              <Link href="#contact">
+              <Link href="/contact">
                 Request a Quote
                 <ArrowUpRight className="size-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="xl" className="w-full sm:w-auto">
-              <Link href="#products">
+              <Link href="/products">
                 Explore Products
                 <ArrowRight className="size-4" />
               </Link>

@@ -55,7 +55,16 @@ export function AdminServices() {
   };
   const save = () => {
     if (!editing || !editing.title.trim()) return;
-    upsertService(editing);
+    upsertService({
+      ...editing,
+      title: editing.title.trim(),
+      number: editing.number?.trim() || "01",
+      summary: editing.summary?.trim() || "",
+      description: editing.description?.trim() || "",
+      features: Array.isArray(editing.features) ? editing.features.filter(Boolean) : [],
+      icon: editing.icon || "wrench",
+      image: editing.image?.trim() || "/images/services/industrial-tools.png",
+    });
     setEditing(null);
   };
   const update = (patch: Partial<ServiceItem>) =>
@@ -91,7 +100,7 @@ export function AdminServices() {
             >
               <div className="flex">
                 <div className="relative aspect-square w-32 shrink-0 overflow-hidden bg-gradient-to-br from-brand/10 via-card to-background">
-                  <Image src={service.image} alt={service.title} fill sizes="128px" className="object-cover" />
+                  <Image src={service.image || "/images/services/industrial-tools.png"} alt={service.title} fill sizes="128px" className="object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-card via-card/20 to-transparent" />
                   <span className="absolute left-2 top-2 font-display text-2xl font-bold text-foreground/30">{service.number}</span>
                 </div>
@@ -132,7 +141,7 @@ export function AdminServices() {
         {editing && (
           <div className="space-y-5">
             <div className="relative aspect-[16/6] overflow-hidden rounded-xl border border-border/60">
-              <Image src={editing.image} alt="Preview" fill sizes="768px" className="object-cover" />
+              <Image src={editing.image || "/images/services/industrial-tools.png"} alt="Preview" fill sizes="768px" className="object-cover" />
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">

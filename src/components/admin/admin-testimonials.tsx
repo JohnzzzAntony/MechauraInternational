@@ -31,8 +31,14 @@ export function AdminTestimonials() {
   const startEdit = (t: Testimonial) => { setEditing({ ...t }); setIsNew(false); };
   const save = () => {
     if (!editing || !editing.quote.trim() || !editing.name.trim()) return;
-    const initials = editing.initials.trim() || editing.name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
-    upsert({ ...editing, initials });
+    const initials = editing.initials?.trim() || editing.name.split(" ").map(w => w[0]).slice(0, 2).join("").toUpperCase();
+    upsert({
+      ...editing,
+      quote: editing.quote.trim(),
+      name: editing.name.trim(),
+      company: editing.company?.trim() || "",
+      initials,
+    });
     setEditing(null);
   };
   const update = (patch: Partial<Testimonial>) => editing && setEditing({ ...editing, ...patch });

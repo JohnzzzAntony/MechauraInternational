@@ -56,6 +56,7 @@ export function ContactSection() {
   const hydrated = useHydrated();
   const company = useContentStore((s) => s.company);
   const products = useContentStore((s) => s.products);
+  const addInquiry = useContentStore((s) => s.addInquiry);
   const c = hydrated ? company : seedCompany;
   const p = hydrated ? products : seedProducts;
 
@@ -91,6 +92,14 @@ export function ContactSection() {
         const err = await res.json().catch(() => ({}));
         throw new Error(err?.error || "Submission failed");
       }
+      addInquiry({
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        company: data.company || "",
+        productCategory: data.productCategory || "",
+        message: data.message,
+      });
       setSubmitted(true);
       reset();
     } catch (e: any) {

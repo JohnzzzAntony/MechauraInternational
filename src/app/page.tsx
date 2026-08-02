@@ -20,14 +20,7 @@ import { CTASection } from "@/components/sections/cta-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { AdminPanel } from "@/components/admin/admin-panel";
 
-function HomeContent() {
-  const params = useSearchParams();
-  const isAdmin = params.get("admin") === "1";
-
-  if (isAdmin) {
-    return <AdminPanel />;
-  }
-
+function HomeLayout() {
   return (
     <>
       <ScrollProgress />
@@ -52,9 +45,20 @@ function HomeContent() {
   );
 }
 
+function HomeContent() {
+  const params = useSearchParams();
+  const isAdmin = params?.get("admin") === "1";
+
+  if (isAdmin) {
+    return <AdminPanel />;
+  }
+
+  return <HomeLayout />;
+}
+
 export default function Home() {
   return (
-    <React.Suspense fallback={null}>
+    <React.Suspense fallback={<HomeLayout />}>
       <HomeContent />
     </React.Suspense>
   );

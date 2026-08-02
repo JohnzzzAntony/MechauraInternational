@@ -48,7 +48,15 @@ export function AdminInsights() {
   const startEdit = (i: InsightPost) => { setEditing({ ...i }); setIsNew(false); };
   const save = () => {
     if (!editing || !editing.title.trim()) return;
-    upsert(editing);
+    upsert({
+      ...editing,
+      title: editing.title.trim(),
+      excerpt: editing.excerpt?.trim() || "",
+      category: editing.category?.trim() || "General",
+      readTime: editing.readTime?.trim() || "5 min read",
+      date: editing.date || new Date().toISOString().slice(0, 10),
+      image: editing.image?.trim() || "/images/insights/article-1.png",
+    });
     setEditing(null);
   };
   const update = (patch: Partial<InsightPost>) => editing && setEditing({ ...editing, ...patch });
@@ -78,7 +86,7 @@ export function AdminInsights() {
               className="group flex overflow-hidden rounded-2xl border border-border/60 bg-card"
             >
               <div className="relative aspect-square w-28 shrink-0 overflow-hidden bg-gradient-to-br from-brand/10 via-card to-background">
-                <Image src={post.image} alt={post.title} fill sizes="112px" className="object-cover" />
+                <Image src={post.image || "/images/insights/article-1.png"} alt={post.title} fill sizes="112px" className="object-cover" />
               </div>
               <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-center gap-2 text-[10px] text-muted-foreground">

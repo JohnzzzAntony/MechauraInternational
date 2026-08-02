@@ -58,7 +58,7 @@ export function ServicesSection() {
               {/* Service image */}
               <div className="relative aspect-[16/10] overflow-hidden">
                 <Image
-                  src={service.image}
+                  src={service.image || "/images/services/industrial-tools.png"}
                   alt={service.title}
                   fill
                   sizes="(max-width: 1024px) 100vw, 33vw"
@@ -87,7 +87,7 @@ export function ServicesSection() {
                 </p>
 
                 <ul className="mt-5 space-y-2" aria-label={`${service.title} capabilities`}>
-                  {service.features.map((feature) => (
+                  {(service.features || []).map((feature) => (
                     <li key={feature} className="flex items-start gap-2.5 text-sm">
                       <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-brand/15 text-brand">
                         <Check className="size-3" strokeWidth={3} />

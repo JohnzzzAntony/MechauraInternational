@@ -33,7 +33,13 @@ export function AdminIndustries() {
   const save = () => {
     if (!editing || !editing.name.trim()) return;
     const slug = editing.slug.trim() || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    upsert({ ...editing, slug });
+    upsert({
+      ...editing,
+      name: editing.name.trim(),
+      slug,
+      description: editing.description?.trim() || "",
+      icon: editing.icon || "factory",
+    });
     setEditing(null);
   };
   const update = (patch: Partial<Industry>) => editing && setEditing({ ...editing, ...patch });

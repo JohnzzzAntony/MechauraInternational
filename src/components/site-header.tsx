@@ -15,13 +15,13 @@ import { seedCompany } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Products", href: "#products" },
-  { label: "Industries", href: "#industries" },
-  { label: "Why Us", href: "#why-us" },
-  { label: "Insights", href: "#insights" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Products", href: "/products" },
+  { label: "Industries", href: "/industries" },
+  { label: "Why Us", href: "/why-us" },
+  { label: "Insights", href: "/insights" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function SiteHeader() {
@@ -56,7 +56,7 @@ export function SiteHeader() {
       <Container size="full" className="flex h-16 items-center justify-between lg:h-20">
         {/* Logo */}
         <Link
-          href="#top"
+          href="/"
           aria-label="Mechaura International — Home"
           className="group relative z-10 flex items-center"
         >
@@ -106,7 +106,7 @@ export function SiteHeader() {
             size="lg"
             className="hidden sm:inline-flex"
           >
-            <Link href="#contact">
+            <Link href="/contact">
               Request a Quote
               <ArrowUpRight className="size-4" />
             </Link>
@@ -166,7 +166,7 @@ export function SiteHeader() {
                 <div className="border-t border-border p-6 space-y-4">
                   <Button asChild variant="brand" size="lg" className="w-full">
                     <SheetClose asChild>
-                      <Link href="#contact">
+                      <Link href="/contact">
                         Request a Quote
                         <ArrowUpRight className="size-4" />
                       </Link>

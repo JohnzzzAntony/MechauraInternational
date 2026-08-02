@@ -19,13 +19,13 @@ import { useHydrated } from "@/lib/use-hydrated";
 import { seedCompany, seedProducts } from "@/lib/content";
 
 const navigation = [
-  { label: "About", href: "#about" },
-  { label: "Services", href: "#services" },
-  { label: "Products", href: "#products" },
-  { label: "Industries", href: "#industries" },
-  { label: "Why Us", href: "#why-us" },
-  { label: "Insights", href: "#insights" },
-  { label: "Contact", href: "#contact" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services" },
+  { label: "Products", href: "/products" },
+  { label: "Industries", href: "/industries" },
+  { label: "Why Us", href: "/why-us" },
+  { label: "Insights", href: "/insights" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export function SiteFooter() {

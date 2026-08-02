@@ -61,7 +61,7 @@ export function CTASection() {
 
             <div className="flex flex-col gap-3 lg:shrink-0">
               <Button asChild variant="brand" size="xl">
-                <Link href="#contact">
+                <Link href="/contact">
                   Request a Quote
                   <ArrowUpRight className="size-4" />
                 </Link>

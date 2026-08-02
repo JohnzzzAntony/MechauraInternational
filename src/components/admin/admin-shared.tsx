@@ -113,22 +113,23 @@ export function AdminTextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaEl
 
 // String list editor (for features, applications, materials, brands)
 export function StringListEditor({
-  items,
+  items = [],
   onChange,
   placeholder = "Add item…",
   label,
 }: {
-  items: string[];
+  items?: string[];
   onChange: (next: string[]) => void;
   placeholder?: string;
   label?: string;
 }) {
+  const safeItems = Array.isArray(items) ? items : [];
   const [draft, setDraft] = React.useState("");
 
   const add = () => {
     const v = draft.trim();
     if (!v) return;
-    onChange([...items, v]);
+    onChange([...safeItems, v]);
     setDraft("");
   };
 
@@ -156,9 +157,9 @@ export function StringListEditor({
           <Plus className="size-4" />
         </Button>
       </div>
-      {items.length > 0 && (
+      {safeItems.length > 0 && (
         <ul className="space-y-1">
-          {items.map((item, idx) => (
+          {safeItems.map((item, idx) => (
             <li
               key={`${item}-${idx}`}
               className="flex items-center justify-between rounded-md border border-border/60 bg-card/40 px-3 py-1.5 text-sm"
@@ -166,7 +167,7 @@ export function StringListEditor({
               <span className="text-foreground/80">{item}</span>
               <button
                 type="button"
-                onClick={() => onChange(items.filter((_, i) => i !== idx))}
+                onClick={() => onChange(safeItems.filter((_, i) => i !== idx))}
                 className="text-muted-foreground transition-colors hover:text-destructive"
                 aria-label={`Remove ${item}`}
               >
