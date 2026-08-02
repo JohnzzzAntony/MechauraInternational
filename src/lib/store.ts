@@ -192,7 +192,7 @@ export const useContentStore = create<ContentState>()(
             api<ProcessStep[]>("/api/content/process-steps", "GET"),
             api<Testimonial[]>("/api/content/testimonials", "GET"),
             api<InsightPost[]>("/api/content/insights", "GET"),
-            api<{ inquiries: Inquiry[] }>("/api/content/inquiries", "GET"),
+            api<{ inquiries: Inquiry[] }>("/api/inquiries", "GET"),
           ]);
 
           const getValue = <T>(index: number, fallback: any): T => {
@@ -427,18 +427,18 @@ export const useContentStore = create<ContentState>()(
         return record;
       },
       loadInquiries: async () => {
-        const res = await api<{ inquiries: Inquiry[] }>("/api/content/inquiries", "GET");
+        const res = await api<{ inquiries: Inquiry[] }>("/api/inquiries", "GET");
         set({ inquiries: res.inquiries ?? [] });
       },
       updateInquiryStatus: async (id, status) => {
         set((s) => ({
           inquiries: s.inquiries.map((i) => (i.id === id ? { ...i, status } : i)),
         }));
-        await api("/api/content/inquiries", "PUT", { id, status });
+        await api("/api/inquiries", "PUT", { id, status });
       },
       removeInquiry: async (id) => {
         set((s) => ({ inquiries: s.inquiries.filter((i) => i.id !== id) }));
-        await api("/api/content/inquiries", "DELETE", { id });
+        await api("/api/inquiries", "DELETE", { id });
       },
 
       // ── Maintenance ────────────────────────────────────────────────────────

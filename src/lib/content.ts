@@ -62,6 +62,8 @@ export interface ProductCategory {
   typicalApplications: string[];
   /** Sub-product / variant names shown in the sidebar on the detail page */
   subProducts: string[];
+  /** Display order for sorting */
+  order?: number;
 }
 
 export interface Industry {
@@ -240,6 +242,103 @@ export const seedServices: ServiceItem[] = [
 export const seedProducts: ProductCategory[] = [
   {
     id: "p1",
+    slug: "dust-collector",
+    name: "Dust Collector Manufacturer in UAE",
+    shortDescription:
+      "Dust collection is a vital process for coal handling, cement fabrication, metal fabrication, mining, chemical processing, woodworking, pharmaceuticals, and more. Prism Tech designs and manufactures industrial dust collectors built for continuous, heavy-duty operation across a wide range of industries.",
+    description:
+      "Prism Tech is a leading manufacturer of industrial dust collectors in the UAE, engineered to capture dust, fumes, and particulate matter at the source for a cleaner, safer, and more compliant work environment.\n\nOur dust collectors are built to handle demanding industrial environments and are widely used across sectors such as:\n\nCoal Handling\nCement Fabrication\nMetal Fabrication\nMining\nChemical Processing\nWoodworking\nPharmaceuticals\nFood Processing\n\nEach unit is custom-engineered to match your process requirements, airflow, and dust load — ensuring high filtration efficiency, low maintenance, and long service life. Contact us to discuss the right dust collection solution for your facility.",
+    applications: [
+      "Coal Handling",
+      "Cement Fabrication",
+      "Metal Fabrication",
+      "Mining",
+      "Chemical Processing",
+      "Woodworking",
+      "Pharmaceuticals",
+      "Food Processing",
+    ],
+    typicalApplications: [
+      "Coal Handling",
+      "Cement Fabrication",
+      "Metal Fabrication",
+      "Mining",
+      "Chemical Processing",
+      "Woodworking",
+      "Pharmaceuticals",
+      "Food Processing",
+    ],
+    subProducts: [
+      "Baghouse Dust Collectors",
+      "Cartridge Dust Collectors",
+      "Cyclone Separators",
+      "Wet Scrubbers",
+      "Portable Dust Collectors",
+      "Central Vacuum Systems",
+      "Custom Engineered Systems",
+    ],
+    materials: ["Carbon Steel", "Stainless Steel 304/316", "Galvanized Steel", "Specialty Alloys"],
+    brands: ["Prism Tech", "Prism Tech Industrial"],
+    icon: "wind",
+    image: "/images/products/dust-collector.png",
+    order: 0,
+  },
+  {
+    id: "p2",
+    slug: "dust-collection-filters",
+    name: "Dust Collection Filter Manufacturers in UAE",
+    shortDescription:
+      "Prism Tech offers a complete line of dust collection filter cartridges to meet all of your filtration requirements — engineered for durability and high dust-holding capacity across a wide range of industrial applications.",
+    description:
+      "Prism Tech offers a complete line of dust collection filter cartridges to meet all of your filtration requirements. Our filters are manufactured to deliver consistent performance, high efficiency, and long operational life, even in the most demanding dust environments.\n\nTypical applications for our Dust Collection Filters include:\n\nFood Applications\tWeld Fumes\tMining\nWoodworking\tPharmaceutical\tChemical\nGrain\tBlasting (sand, steel, etc.)\tPowder Coating\nPlastics & Rubber\tFoundries\tand many others\nMetal Grinding\tBattery Plants",
+    applications: [
+      "Food Applications",
+      "Weld Fumes",
+      "Mining",
+      "Woodworking",
+      "Pharmaceutical",
+      "Chemical",
+      "Grain",
+      "Blasting (sand, steel, etc.)",
+      "Powder Coating",
+      "Plastics & Rubber",
+      "Foundries",
+      "Metal Grinding",
+      "Battery Plants",
+    ],
+    typicalApplications: [
+      "Food Applications",
+      "Weld Fumes",
+      "Mining",
+      "Woodworking",
+      "Pharmaceutical",
+      "Chemical",
+      "Grain",
+      "Blasting (sand, steel, etc.)",
+      "Powder Coating",
+      "Plastics & Rubber",
+      "Foundries",
+      "Metal Grinding",
+      "Battery Plants",
+    ],
+    subProducts: [
+      "Cartridge Filters",
+      "Bag Filters",
+      "HEPA Filters",
+      "Pleated Filter Cartridges",
+      "Nanofiber Filters",
+      "Antistatic Filters",
+      "High Temperature Filters",
+      "Oil & Water Resistant Filters",
+    ],
+    materials: ["Cellulose", "Polyester", "Nanofiber", "PTFE Membrane", "Spunbond", "Conductive Media"],
+    brands: ["Prism Tech", "Prism Tech Filtration"],
+    icon: "filter",
+    image: "/images/products/dust-collection-filters.png",
+    order: 1,
+  },
+  {
+    id: "p1",
     slug: "abrasive-removal-brushes",
     name: "Abrasive Removal Brushes",
     shortDescription:
@@ -282,6 +381,7 @@ export const seedProducts: ProductCategory[] = [
     brands: ["Mechaura Industrial", "Abrasil Pro", "Vikan Technical"],
     icon: "brush",
     image: "/images/products/abrasive-brushes.png",
+    order: 1,
   },
   {
     id: "p2",
@@ -326,6 +426,7 @@ export const seedProducts: ProductCategory[] = [
     brands: ["Mechaura Industrial", "SKF-Compatible", "NSK-Compatible", "FAG-Compatible"],
     icon: "circle-dot",
     image: "/images/products/bearings.png",
+    order: 2,
   },
   {
     id: "p3",
@@ -370,6 +471,7 @@ export const seedProducts: ProductCategory[] = [
     brands: ["Mechaura Industrial", "Parker-Compatible", "Manuli-Compatible"],
     icon: "git-branch",
     image: "/images/products/hydraulic-hose.png",
+    order: 3,
   },
   {
     id: "p4",
@@ -414,6 +516,7 @@ export const seedProducts: ProductCategory[] = [
     brands: ["Mechaura Industrial", "Sandvik-Compatible", "Kennametal-Compatible"],
     icon: "scissors",
     image: "/images/products/cutting-tools.png",
+    order: 4,
   },
   {
     id: "p5",
@@ -458,6 +561,7 @@ export const seedProducts: ProductCategory[] = [
     brands: ["Mechaura Industrial", "ElevTech Components"],
     icon: "move-vertical",
     image: "/images/products/elevator-accessories.png",
+    order: 5,
   },
   {
     id: "p6",
@@ -501,6 +605,7 @@ export const seedProducts: ProductCategory[] = [
     brands: ["Mechaura Industrial", "Bahco-Compatible", "Lenox-Compatible"],
     icon: "zap",
     image: "/images/products/bandsaw-blades.png",
+    order: 6,
   },
 ];
 

@@ -27,7 +27,7 @@ async function ensureSeeded() {
         brands: p.brands,
         icon: p.icon,
         image: p.image,
-        order: i,
+        order: p.order ?? i,
       })),
     });
   }

@@ -11,6 +11,7 @@ import { useContentStore, newId } from "@/lib/store";
 import type { ProductCategory } from "@/lib/content";
 import { Icon } from "@/components/icon";
 import { AdminModal, AdminField, AdminTextInput, IconPicker, StringListEditor } from "@/components/admin/admin-shared";
+import { toast } from "@/hooks/use-toast";
 
 const blankProduct = (): ProductCategory => ({
   id: newId("p"),
@@ -25,6 +26,7 @@ const blankProduct = (): ProductCategory => ({
   subProducts: [],
   icon: "package",
   image: "/images/products/abrasive-brushes.png",
+  order: 0,
 });
 
 const DEFAULT_IMAGE_OPTIONS = [
@@ -34,6 +36,8 @@ const DEFAULT_IMAGE_OPTIONS = [
   { label: "Cutting Tools", value: "/images/products/cutting-tools.png" },
   { label: "Elevator Accessories", value: "/images/products/elevator-accessories.png" },
   { label: "Bandsaw Blades", value: "/images/products/bandsaw-blades.png" },
+  { label: "Dust Collector", value: "/images/products/dust-collector.png" },
+  { label: "Dust Collection Filters", value: "/images/products/dust-collection-filters.png" },
 ];
 
 export function AdminProducts() {
@@ -59,11 +63,12 @@ export function AdminProducts() {
       const data = await res.json();
       if (data.url) {
         update({ image: data.url });
+        toast({ title: "Image uploaded", description: "Product image updated successfully." });
       } else {
-        alert(data.error || "Upload failed");
+        toast({ title: "Upload failed", description: data.error || "Please try again.", variant: "destructive" });
       }
     } catch {
-      alert("Upload failed. Please try again.");
+      toast({ title: "Upload failed", description: "Please try again.", variant: "destructive" });
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -84,25 +89,40 @@ export function AdminProducts() {
     setEditing({ ...p });
     setIsNew(false);
   };
-  const save = () => {
+  const save = async () => {
     if (!editing) return;
     if (!editing.name.trim()) return;
     // Auto-generate slug if empty
-    const slug = editing.slug.trim() || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    upsertProduct({
-      ...editing,
-      name: editing.name.trim(),
-      slug,
-      shortDescription: editing.shortDescription?.trim() || "",
-      description: editing.description?.trim() || "",
-      applications: Array.isArray(editing.applications) ? editing.applications.filter(Boolean) : [],
-      materials: Array.isArray(editing.materials) ? editing.materials.filter(Boolean) : [],
-      brands: Array.isArray(editing.brands) ? editing.brands.filter(Boolean) : [],
-      typicalApplications: Array.isArray(editing.typicalApplications) ? editing.typicalApplications.filter(Boolean) : [],
-      subProducts: Array.isArray(editing.subProducts) ? editing.subProducts.filter(Boolean) : [],
-      icon: editing.icon || "package",
-      image: editing.image?.trim() || "/images/products/abrasive-brushes.png",
-    });
+    let slug = editing.slug.trim() || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    // Handle slug collision
+    const products = useContentStore.getState().products;
+    let counter = 1;
+    const originalSlug = slug;
+    while (products.some((p) => p.slug === slug && p.id !== editing.id)) {
+      slug = `${originalSlug}-${counter}`;
+      counter++;
+    }
+    try {
+      await upsertProduct({
+        ...editing,
+        name: editing.name.trim(),
+        slug,
+        shortDescription: editing.shortDescription?.trim() || "",
+        description: editing.description?.trim() || "",
+        applications: Array.isArray(editing.applications) ? editing.applications.filter(Boolean) : [],
+        materials: Array.isArray(editing.materials) ? editing.materials.filter(Boolean) : [],
+        brands: Array.isArray(editing.brands) ? editing.brands.filter(Boolean) : [],
+        typicalApplications: Array.isArray(editing.typicalApplications) ? editing.typicalApplications.filter(Boolean) : [],
+        subProducts: Array.isArray(editing.subProducts) ? editing.subProducts.filter(Boolean) : [],
+        icon: editing.icon || "package",
+        image: editing.image?.trim() || "/images/products/abrasive-brushes.png",
+        order: editing.order ?? 0,
+      });
+      toast({ title: isNew ? "Product created" : "Product updated", description: `"${editing.name.trim()}" saved successfully.` });
+    } catch (err) {
+      toast({ title: "Error", description: "Failed to save product. Please try again.", variant: "destructive" });
+      console.error(err);
+    }
     setEditing(null);
   };
 
@@ -242,7 +262,16 @@ export function AdminProducts() {
               />
             </AdminField>
 
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <AdminField label="Display Order" hint="Lower numbers appear first.">
+                <AdminTextInput
+                  type="number"
+                  value={editing.order ?? 0}
+                  onChange={(e) => update({ order: parseInt(e.target.value) || 0 })}
+                  placeholder="0"
+                  className="w-full"
+                />
+              </AdminField>
               <AdminField label="Icon">
                 <IconPicker value={editing.icon} onChange={(icon) => update({ icon })} />
               </AdminField>
@@ -371,6 +400,7 @@ export function AdminProducts() {
                   size="sm"
                   onClick={() => {
                     removeProduct(confirmDelete.id);
+                    toast({ title: "Product deleted", description: `"${confirmDelete.name}" has been removed.` });
                     setConfirmDelete(null);
                   }}
                 >

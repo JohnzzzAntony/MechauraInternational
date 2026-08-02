@@ -203,6 +203,9 @@ const ICON_OPTIONS = [
   "building-2",
   "trending-down",
   "badge-check",
+  "wind",
+  "filter",
+  "package",
 ];
 
 export function IconPicker({
