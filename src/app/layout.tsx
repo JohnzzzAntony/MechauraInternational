@@ -94,9 +94,11 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/logo-mark.png", type: "image/png" },
       { url: "/favicon.svg", type: "image/svg+xml" },
     ],
-    apple: "/favicon.svg",
+    shortcut: "/logo-mark.png",
+    apple: "/logo-mark.png",
   },
   manifest: "/manifest.webmanifest",
 };
