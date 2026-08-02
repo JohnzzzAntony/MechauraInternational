@@ -3,6 +3,7 @@ import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { StoreHydrator } from "@/components/store-hydrator";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -195,6 +196,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <StoreHydrator />
           {children}
           <Toaster />
         </ThemeProvider>

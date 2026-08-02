@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,20 +11,167 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  createdAt DateTime @default(now())
+// ───────────────────────────────────────────────
+// Company-level settings (single row, id = "main")
+// ───────────────────────────────────────────────
+model Company {
+  id              String   @id @default("main")
+  name            String
+  shortName       String
+  legalEntity     String
+  tagline         String
+  description     String
+  foundedYear     Int
+  headquarters    String
+  phone           String
+  phoneRaw        String
+  email           String
+  hours           String
+  linkedinUrl     String   @default("#")
+  instagramUrl    String   @default("#")
+  facebookUrl     String   @default("#")
+  whatsappUrl     String   @default("#")
+  partnerBrands   String[] @default([])
+  updatedAt       DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Hero stats (small counter items on homepage)
+// ───────────────────────────────────────────────
+model HeroStat {
+  id        String   @id
+  value     Int
+  suffix    String
+  label     String
+  order     Int      @default(0)
   updatedAt DateTime @updatedAt
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  authorId  String
-  createdAt DateTime @default(now())
+// ───────────────────────────────────────────────
+// Value items ("What we stand for")
+// ───────────────────────────────────────────────
+model Value {
+  id          String   @id
+  title       String
+  description String
+  icon        String
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Services
+// ───────────────────────────────────────────────
+model Service {
+  id          String   @id
+  number      String
+  title       String
+  summary     String
+  description String
+  features    String[]
+  icon        String
+  image       String
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Products
+// ───────────────────────────────────────────────
+model Product {
+  id                  String   @id
+  slug                String   @unique
+  name                String
+  shortDescription    String
+  description         String
+  applications        String[]
+  typicalApplications String[]
+  subProducts         String[]
+  materials           String[]
+  brands              String[]
+  icon                String
+  image               String
+  order               Int      @default(0)
+  updatedAt           DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Industries
+// ───────────────────────────────────────────────
+model Industry {
+  id          String   @id
+  slug        String   @unique
+  name        String
+  description String
+  icon        String
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Why Choose Us items
+// ───────────────────────────────────────────────
+model WhyChooseUsItem {
+  id          String   @id
+  title       String
+  description String
+  icon        String
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Process steps
+// ───────────────────────────────────────────────
+model ProcessStep {
+  id          String   @id
+  number      String
+  title       String
+  description String
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Testimonials
+// ───────────────────────────────────────────────
+model Testimonial {
+  id        String   @id
+  quote     String
+  name      String
+  company   String
+  initials  String
+  order     Int      @default(0)
   updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Insights / Blog posts
+// ───────────────────────────────────────────────
+model InsightPost {
+  id        String   @id
+  title     String
+  excerpt   String
+  category  String
+  readTime  String
+  date      String
+  image     String
+  order     Int      @default(0)
+  updatedAt DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Contact form inquiries
+// ───────────────────────────────────────────────
+model Inquiry {
+  id              String   @id
+  reference       String   @unique
+  name            String
+  email           String
+  phone           String
+  company         String
+  productCategory String
+  message         String
+  status          String   @default("new")
+  receivedAt      DateTime @default(now())
 }
