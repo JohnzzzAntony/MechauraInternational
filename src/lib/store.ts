@@ -181,19 +181,7 @@ export const useContentStore = create<ContentState>()(
       hydrate: async () => {
         if (get().hydrated) return;
         try {
-          const [
-            company,
-            heroStats,
-            values,
-            services,
-            products,
-            industries,
-            whyChooseUs,
-            processSteps,
-            testimonials,
-            insights,
-            inquiryRes,
-          ] = await Promise.all([
+          const results = await Promise.allSettled([
             api<any>("/api/content/company", "GET"),
             api<StatItem[]>("/api/content/hero-stats", "GET"),
             api<ValueItem[]>("/api/content/values", "GET"),
@@ -207,16 +195,31 @@ export const useContentStore = create<ContentState>()(
             api<{ inquiries: Inquiry[] }>("/api/content/inquiries", "GET"),
           ]);
 
+          const getValue = <T>(index: number, fallback: any): T => {
+            const res = results[index];
+            if (res.status === "fulfilled" && res.value) return res.value as T;
+            console.error(`[store] Hydration endpoint ${index} failed:`, res.status === "rejected" ? res.reason : "Empty result");
+            return fallback;
+          };
+
+          const company = getValue<any>(0, {});
+          const heroStats = getValue<StatItem[]>(1, seedHeroStats);
+          const values = getValue<ValueItem[]>(2, seedValues);
+          const services = getValue<ServiceItem[]>(3, seedServices);
+          const products = getValue<ProductCategory[]>(4, seedProducts);
+          const industries = getValue<Industry[]>(5, seedIndustries);
+          const whyChooseUs = getValue<WhyChooseUsItem[]>(6, seedWhyChooseUs);
+          const processSteps = getValue<ProcessStep[]>(7, seedProcessSteps);
+          const testimonials = getValue<Testimonial[]>(8, seedTestimonials);
+          const insights = getValue<InsightPost[]>(9, seedInsights);
+          const inquiryRes = getValue<{ inquiries: Inquiry[] }>(10, { inquiries: [] });
+
           set({
             company: {
+              ...seedCompany,
               ...company,
               // Ensure nested social object is correct shape
-              social: company.social ?? {
-                linkedin: company.linkedinUrl ?? "#",
-                instagram: company.instagramUrl ?? "#",
-                facebook: company.facebookUrl ?? "#",
-                whatsapp: company.whatsappUrl ?? "#",
-              },
+              social: company.social ?? seedCompany.social,
             },
             partnerBrands: company.partnerBrands ?? seedPartnerBrands,
             heroStats,
@@ -232,7 +235,7 @@ export const useContentStore = create<ContentState>()(
             hydrated: true,
           });
         } catch (err) {
-          console.error("[store] Hydration failed, using seed data:", err);
+          console.error("[store] Hydration failed entirely:", err);
           set({ hydrated: true });
         }
       },
@@ -268,6 +271,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Values ─────────────────────────────────────────────────────────────
       upsertValue: async (item) => {
+        if (!item.id) item.id = uid("val");
         set((s) => {
           const exists = s.values.some((v) => v.id === item.id);
           return {
@@ -285,6 +289,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Services ───────────────────────────────────────────────────────────
       upsertService: async (item) => {
+        if (!item.id) item.id = uid("srv");
         set((s) => {
           const exists = s.services.some((v) => v.id === item.id);
           return {
@@ -302,6 +307,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Products ───────────────────────────────────────────────────────────
       upsertProduct: async (item) => {
+        if (!item.id) item.id = uid("prd");
         set((s) => {
           const exists = s.products.some((v) => v.id === item.id);
           return {
@@ -319,6 +325,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Industries ─────────────────────────────────────────────────────────
       upsertIndustry: async (item) => {
+        if (!item.id) item.id = uid("ind");
         set((s) => {
           const exists = s.industries.some((v) => v.id === item.id);
           return {
@@ -336,6 +343,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Why Choose Us ──────────────────────────────────────────────────────
       upsertWhyChooseUs: async (item) => {
+        if (!item.id) item.id = uid("wcu");
         set((s) => {
           const exists = s.whyChooseUs.some((v) => v.id === item.id);
           return {
@@ -353,6 +361,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Process Steps ──────────────────────────────────────────────────────
       upsertProcessStep: async (item) => {
+        if (!item.id) item.id = uid("stp");
         set((s) => {
           const exists = s.processSteps.some((v) => v.id === item.id);
           return {
@@ -370,6 +379,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Testimonials ───────────────────────────────────────────────────────
       upsertTestimonial: async (item) => {
+        if (!item.id) item.id = uid("tst");
         set((s) => {
           const exists = s.testimonials.some((v) => v.id === item.id);
           return {
@@ -387,6 +397,7 @@ export const useContentStore = create<ContentState>()(
 
       // ── Insights ───────────────────────────────────────────────────────────
       upsertInsight: async (item) => {
+        if (!item.id) item.id = uid("ins");
         set((s) => {
           const exists = s.insights.some((v) => v.id === item.id);
           return {

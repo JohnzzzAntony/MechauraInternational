@@ -37,11 +37,15 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
+    const { id, ...data } = body;
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
     const maxOrder = await db.insightPost.aggregate({ _max: { order: true } });
     const row = await db.insightPost.upsert({
-      where: { id: body.id },
-      create: { ...body, order: (maxOrder._max.order ?? -1) + 1 },
-      update: body,
+      where: { id },
+      create: { id, ...data, order: (maxOrder._max.order ?? -1) + 1 },
+      update: data,
     });
     return NextResponse.json(row);
   } catch (err) {
@@ -54,6 +58,9 @@ export async function PUT(request: Request) {
   try {
     const body = await request.json();
     const { id, ...data } = body;
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
     const row = await db.insightPost.update({ where: { id }, data });
     return NextResponse.json(row);
   } catch (err) {
@@ -65,6 +72,9 @@ export async function PUT(request: Request) {
 export async function DELETE(request: Request) {
   try {
     const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 });
+    }
     await db.insightPost.delete({ where: { id } });
     return NextResponse.json({ ok: true });
   } catch (err) {

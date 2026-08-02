@@ -31,7 +31,6 @@ export async function GET() {
   try {
     const row = await db.company.findUnique({ where: { id: "main" } });
     if (!row) {
-      // Auto-seed on first request
       const created = await db.company.create({ data: DEFAULT_COMPANY });
       return NextResponse.json(toClient(created));
     }
@@ -45,10 +44,12 @@ export async function GET() {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
+    const data = flattenForDB(body);
+    delete data.id; // Delete id so Prisma update payload is clean
     const row = await db.company.upsert({
       where: { id: "main" },
-      create: { ...DEFAULT_COMPANY, ...flattenForDB(body) },
-      update: flattenForDB(body),
+      create: { ...DEFAULT_COMPANY, ...data },
+      update: data,
     });
     return NextResponse.json(toClient(row));
   } catch (err) {
@@ -57,7 +58,6 @@ export async function PUT(request: Request) {
   }
 }
 
-// Convert nested social object → flat DB columns
 function flattenForDB(body: any) {
   const out: any = { ...body };
   if (body.social) {
@@ -70,7 +70,6 @@ function flattenForDB(body: any) {
   return out;
 }
 
-// Convert flat DB row → nested client shape
 function toClient(row: any) {
   return {
     name: row.name,
