@@ -1,8 +1,8 @@
 # Dockerfile for Mechaura International
 # Multi-stage build for production optimization
 
-# Base image
-FROM oven/bun:1.1-alpine AS base
+# Base image - use latest Bun 1.x for lockfile compatibility
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
 # Install dependencies only when needed
@@ -24,7 +24,7 @@ COPY . .
 RUN bun run build
 
 # Production image
-FROM oven/bun:1.1-alpine AS runner
+FROM oven/bun:1-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
