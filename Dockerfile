@@ -54,4 +54,4 @@ EXPOSE 3000
 # The db push is bounded by a timeout and its failure is ignored so that
 # the server always starts and can respond to health checks, even if the
 # database is unreachable or the push hangs/fails.
-CMD ["sh", "-c", "timeout 30 bunx prisma db push --accept-data-loss --skip-generate || true; exec node server.js"]
+CMD ["sh", "-c", "timeout 30 bunx prisma db push --accept-data-loss --skip-generate || true; exec next start"]
