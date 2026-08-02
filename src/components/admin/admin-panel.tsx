@@ -71,7 +71,7 @@ export function AdminPanel() {
     setError(null);
     const ok = login(pwd);
     if (!ok) {
-      setError("Incorrect password. Default is admin123 — change it after login.");
+      setError("Incorrect password. Default is Mechaura123 — change it after login.");
     } else {
       setPwd("");
     }
@@ -149,7 +149,7 @@ export function AdminPanel() {
               <div className="mt-6 flex items-start gap-2 rounded-lg border border-brand/20 bg-brand/5 p-3 text-xs text-muted-foreground">
                 <Sparkles className="mt-0.5 size-3.5 shrink-0 text-brand" />
                 <span>
-                  Demo password: <code className="font-mono text-brand">admin123</code> — change
+                  Demo password: <code className="font-mono text-brand">Mechaura123</code> — change
                   it from Settings after login.
                 </span>
               </div>

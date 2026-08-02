@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "framer-motion";
-import { Menu, X, Moon, Sun, ArrowUpRight, Phone, Settings } from "lucide-react";
+import { Menu, X, Moon, Sun, ArrowUpRight, Phone } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
@@ -82,20 +82,6 @@ export function SiteHeader() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          {/* Admin entry */}
-          <Button
-            asChild
-            variant="ghost"
-            size="icon"
-            aria-label="Open admin panel"
-            title="Admin Panel"
-            className="text-muted-foreground hover:text-brand"
-          >
-            <Link href="/?admin=1">
-              <Settings className="size-4" />
-            </Link>
-          </Button>
-
           <Button
             variant="ghost"
             size="icon"

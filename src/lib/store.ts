@@ -123,7 +123,7 @@ const initialState = {
   insights: seedInsights,
   inquiries: [] as Inquiry[],
   isAdmin: false,
-  adminPassword: "admin123",
+  adminPassword: "Mechaura123",
 };
 
 export const useContentStore = create<ContentState>()(
