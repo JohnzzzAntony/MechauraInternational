@@ -1,62 +1,34 @@
 import * as React from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
-interface LogoProps extends React.SVGProps<SVGSVGElement> {
+interface LogoProps {
   withText?: boolean;
   invert?: boolean;
+  className?: string;
+  size?: number;
 }
 
 /**
- * Mechaura International — premium industrial logo mark
- * A hexagonal gear-inspired mark with an "M" formation in the center,
- * rendered in brand amber. Combines precision engineering cues with
- * the company initial.
+ * Mechaura International — uses the real company logo from /logo.webp
  */
-export function LogoMark({ className, ...props }: React.SVGProps<SVGSVGElement>) {
+export function LogoMark({ className, size = 48 }: { className?: string; size?: number }) {
   return (
-    <svg
-      viewBox="0 0 48 48"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className={cn("size-8", className)}
-      {...props}
-    >
-      {/* Outer hexagon ring */}
-      <path
-        d="M24 2L42.5 12.5V35.5L24 46L5.5 35.5V12.5L24 2Z"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        className="text-brand"
-        fill="currentColor"
-        fillOpacity="0.08"
-      />
-      {/* Inner M formation */}
-      <path
-        d="M14 33V17L24 26L34 17V33"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="text-brand"
-      />
-      {/* Bottom accent line */}
-      <path
-        d="M14 36H34"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        className="text-brand"
-        opacity="0.4"
-      />
-    </svg>
+    <Image
+      src="/logo.webp"
+      alt="Mechaura International Logo"
+      width={size}
+      height={size}
+      className={cn("shrink-0 object-contain", className)}
+      priority
+    />
   );
 }
 
-export function Logo({ withText = true, invert = false, className, ...props }: LogoProps) {
+export function Logo({ withText = false, invert = false, className, size = 48 }: LogoProps) {
   return (
-    <span className={cn("inline-flex items-center gap-2.5", className)} {...(props as any)}>
-      <LogoMark className="size-8 shrink-0" />
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <LogoMark size={size} className="shrink-0" />
       {withText && (
         <span className="flex flex-col leading-none">
           <span

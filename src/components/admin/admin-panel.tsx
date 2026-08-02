@@ -15,13 +15,11 @@ import {
   Eye,
   Lock,
   ArrowLeft,
-  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useContentStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
@@ -118,9 +116,6 @@ export function AdminPanel() {
 
               <form onSubmit={handleLogin} className="mt-8 space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="admin-pwd" className="text-sm font-medium">
-                    Admin Password
-                  </Label>
                   <Input
                     id="admin-pwd"
                     type="password"
@@ -137,7 +132,7 @@ export function AdminPanel() {
                     role="alert"
                     className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-xs text-destructive"
                   >
-                    {error}
+                    Incorrect password. Please try again.
                   </div>
                 )}
 
@@ -145,14 +140,6 @@ export function AdminPanel() {
                   Sign In
                 </Button>
               </form>
-
-              <div className="mt-6 flex items-start gap-2 rounded-lg border border-brand/20 bg-brand/5 p-3 text-xs text-muted-foreground">
-                <Sparkles className="mt-0.5 size-3.5 shrink-0 text-brand" />
-                <span>
-                  Demo password: <code className="font-mono text-brand">Mechaura123</code> — change
-                  it from Settings after login.
-                </span>
-              </div>
             </div>
 
             <div className="mt-6 text-center">

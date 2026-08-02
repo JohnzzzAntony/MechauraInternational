@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Pencil, Trash2, Search, Package } from "lucide-react";
+import { Plus, Pencil, Trash2, Search, Package, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,6 +21,8 @@ const blankProduct = (): ProductCategory => ({
   applications: [],
   materials: [],
   brands: [],
+  typicalApplications: [],
+  subProducts: [],
   icon: "package",
   image: "/images/products/abrasive-brushes.png",
 });
@@ -43,6 +45,30 @@ export function AdminProducts() {
   const [isNew, setIsNew] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const [confirmDelete, setConfirmDelete] = React.useState<ProductCategory | null>(null);
+  const [uploading, setUploading] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editing) return;
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const res = await fetch("/api/upload", { method: "POST", body: formData });
+      const data = await res.json();
+      if (data.url) {
+        update({ image: data.url });
+      } else {
+        alert(data.error || "Upload failed");
+      }
+    } catch {
+      alert("Upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const filtered = products.filter(
     (p) =>
@@ -63,7 +89,20 @@ export function AdminProducts() {
     if (!editing.name.trim()) return;
     // Auto-generate slug if empty
     const slug = editing.slug.trim() || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-    upsertProduct({ ...editing, slug });
+    upsertProduct({
+      ...editing,
+      name: editing.name.trim(),
+      slug,
+      shortDescription: editing.shortDescription?.trim() || "",
+      description: editing.description?.trim() || "",
+      applications: Array.isArray(editing.applications) ? editing.applications.filter(Boolean) : [],
+      materials: Array.isArray(editing.materials) ? editing.materials.filter(Boolean) : [],
+      brands: Array.isArray(editing.brands) ? editing.brands.filter(Boolean) : [],
+      typicalApplications: Array.isArray(editing.typicalApplications) ? editing.typicalApplications.filter(Boolean) : [],
+      subProducts: Array.isArray(editing.subProducts) ? editing.subProducts.filter(Boolean) : [],
+      icon: editing.icon || "package",
+      image: editing.image?.trim() || "/images/products/abrasive-brushes.png",
+    });
     setEditing(null);
   };
 
@@ -111,7 +150,7 @@ export function AdminProducts() {
             >
               <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-brand/10 via-card to-background">
                 <Image
-                  src={product.image}
+                  src={product.image || "/images/products/abrasive-brushes.png"}
                   alt={product.name}
                   fill
                   sizes="(max-width: 640px) 100vw, 33vw"
@@ -160,7 +199,7 @@ export function AdminProducts() {
             {/* Image preview */}
             <div className="relative aspect-[16/8] overflow-hidden rounded-xl border border-border/60 bg-gradient-to-br from-brand/10 via-card to-background">
               <Image
-                src={editing.image}
+                src={editing.image || "/images/products/abrasive-brushes.png"}
                 alt="Preview"
                 fill
                 sizes="768px"
@@ -207,12 +246,43 @@ export function AdminProducts() {
               <AdminField label="Icon">
                 <IconPicker value={editing.icon} onChange={(icon) => update({ icon })} />
               </AdminField>
-              <AdminField label="Product Image" hint="Choose from existing or paste a new URL.">
-                <AdminTextInput
-                  value={editing.image}
-                  onChange={(e) => update({ image: e.target.value })}
-                  placeholder="/images/products/…"
+              <AdminField label="Product Image" hint="Upload from your computer or paste a URL.">
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
                 />
+                <div className="flex gap-2">
+                  <AdminTextInput
+                    value={editing.image}
+                    onChange={(e) => update({ image: e.target.value })}
+                    placeholder="/images/products/… or upload below"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                    disabled={uploading}
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    {uploading ? (
+                      <span className="flex items-center gap-1.5">
+                        <span className="size-3.5 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+                        Uploading…
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5">
+                        <Upload className="size-3.5" />
+                        Upload
+                      </span>
+                    )}
+                  </Button>
+                </div>
                 <div className="mt-2 flex flex-wrap gap-1.5">
                   {DEFAULT_IMAGE_OPTIONS.map((opt) => (
                     <button
@@ -250,6 +320,21 @@ export function AdminProducts() {
                 items={editing.brands}
                 onChange={(brands) => update({ brands })}
                 placeholder="Add a brand…"
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StringListEditor
+                label="Typical Applications (Detail Page)"
+                items={editing.typicalApplications ?? []}
+                onChange={(typicalApplications) => update({ typicalApplications })}
+                placeholder="Add a typical application…"
+              />
+              <StringListEditor
+                label="Product Variants / Sub-Products (Sidebar)"
+                items={editing.subProducts ?? []}
+                onChange={(subProducts) => update({ subProducts })}
+                placeholder="Add a variant or sub-product…"
               />
             </div>
           </div>
