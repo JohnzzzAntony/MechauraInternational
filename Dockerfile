@@ -11,12 +11,12 @@ RUN apk add --no-cache libc6-compat openssl
 COPY package.json bun.lock* ./
 RUN bun install --frozen-lockfile
 
-# Generate Prisma Client
+# Generate Prisma Client (no DB connection needed - just code generation)
 FROM deps AS prisma
 COPY prisma ./prisma/
 RUN bunx prisma generate
 
-# Build the application
+# Build the application (no DB env vars needed at build time)
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -39,10 +39,15 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:bunjs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:bunjs /app/.next/static ./.next/static
 COPY --from=prisma --chown=nextjs:bunjs /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=prisma --chown=nextjs:bunjs /app/node_modules/@prisma ./node_modules/@prisma
 COPY --from=builder --chown=nextjs:bunjs /app/prisma ./prisma
+
+# Copy prisma binary so db push works at runtime
+COPY --from=prisma /usr/local/bin/prisma /usr/local/bin/prisma
 
 USER nextjs
 
 EXPOSE 3000
 
-CMD ["bun", "server.js"]
+# Run db push at startup (has access to env vars), then start server
+CMD ["sh", "-c", "bunx prisma db push --accept-data-loss --skip-generate && node server.js"]
