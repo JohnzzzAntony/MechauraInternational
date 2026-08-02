@@ -10,25 +10,55 @@ interface LogoProps {
 }
 
 /**
- * Mechaura International — uses the real company logo from /logo.webp
+ * Mechaura International — Icon Mark only (orange mountain gear mark)
  */
-export function LogoMark({ className, size = 48 }: { className?: string; size?: number }) {
+export function LogoMark({ className, size = 40 }: { className?: string; size?: number }) {
   return (
     <Image
-      src="/logo.webp"
-      alt="Mechaura International Logo"
+      src="/logo-mark.png"
+      alt="Mechaura International Mark"
       width={size}
       height={size}
-      className={cn("shrink-0 object-contain", className)}
+      className={cn("shrink-0 object-contain h-auto w-auto", className)}
       priority
     />
   );
 }
 
-export function Logo({ withText = false, invert = false, className, size = 48 }: LogoProps) {
+/**
+ * Mechaura International — Full Logo with transparent background
+ * Automatically adapts text color for Dark mode (white text) and Light mode (navy text)
+ */
+export function Logo({ withText = false, invert = false, className, size = 40 }: LogoProps) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <LogoMark size={size} className="shrink-0" />
+      {/* Full Logo — Dark Mode (white text + orange mark + transparent bg) */}
+      <Image
+        src="/logo-dark.png"
+        alt="Mechaura International Logo"
+        width={180}
+        height={size}
+        className={cn(
+          "shrink-0 object-contain h-9 w-auto",
+          invert ? "block" : "hidden dark:block",
+          className
+        )}
+        priority
+      />
+      {/* Full Logo — Light Mode (navy text + orange mark + transparent bg) */}
+      <Image
+        src="/logo-light.png"
+        alt="Mechaura International Logo"
+        width={180}
+        height={size}
+        className={cn(
+          "shrink-0 object-contain h-9 w-auto",
+          invert ? "hidden" : "block dark:hidden",
+          className
+        )}
+        priority
+      />
+
       {withText && (
         <span className="flex flex-col leading-none">
           <span
@@ -52,3 +82,4 @@ export function Logo({ withText = false, invert = false, className, size = 48 }:
     </span>
   );
 }
+
