@@ -91,6 +91,7 @@ interface ContentState {
 
   // ── Hydration ────────────────────────────────────────────────────────────
   hydrate: () => Promise<void>;
+  setHydrated: (value: boolean) => void;
 
   // ── Auth actions ────────────────────────────────────────────────────────
   login: (password: string) => boolean;
@@ -177,10 +178,10 @@ export const useContentStore = create<ContentState>()(
     (set, get) => ({
       ...seedState,
 
-      // ── Hydrate from DB (called once on mount) ──────────────────────────
+      // ── Hydrate from DB (called on every page mount) ────────────────────
       hydrate: async () => {
-        if (get().hydrated) return;
         try {
+
           const results = await Promise.allSettled([
             api<any>("/api/content/company", "GET"),
             api<StatItem[]>("/api/content/hero-stats", "GET"),
@@ -240,7 +241,10 @@ export const useContentStore = create<ContentState>()(
         }
       },
 
+      setHydrated: (value) => set({ hydrated: value }),
+
       // ── Auth ─────────────────────────────────────────────────────────────
+
       login: (password) => {
         const ok = password === get().adminPassword;
         if (ok) set({ isAdmin: true });

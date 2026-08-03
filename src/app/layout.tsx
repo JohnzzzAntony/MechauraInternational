@@ -96,7 +96,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/logo-mark.png", type: "image/png" },
-      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-custom.jpg", type: "image/jpeg" },
     ],
     shortcut: "/logo-mark.png",
     apple: "/logo-mark.png",

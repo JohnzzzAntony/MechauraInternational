@@ -18,6 +18,10 @@ import {
   Sparkles,
   SlidersHorizontal,
   Search as SearchIcon,
+  Hash,
+  Heart,
+  GitBranch,
+  CheckSquare,
 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
@@ -36,15 +40,23 @@ import { AdminSections } from "@/components/admin/admin-sections";
 import { AdminInsights } from "@/components/admin/admin-insights";
 import { AdminCompanySettings } from "@/components/admin/admin-company";
 import { AdminInquiries } from "@/components/admin/admin-inquiries";
+import { AdminStats } from "@/components/admin/admin-stats";
+import { AdminValues } from "@/components/admin/admin-values";
+import { AdminWhyChooseUs } from "@/components/admin/admin-why-choose-us";
+import { AdminProcess } from "@/components/admin/admin-process";
 
 type AdminView =
   | "dashboard"
   | "hero"
+  | "stats"
   | "sections"
   | "seo"
   | "products"
   | "services"
   | "industries"
+  | "values"
+  | "why-choose-us"
+  | "process"
   | "testimonials"
   | "insights"
   | "inquiries"
@@ -53,16 +65,21 @@ type AdminView =
 const navItems: { id: AdminView; label: string; icon: typeof LayoutDashboard; description: string }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, description: "Overview & quick stats" },
   { id: "hero", label: "Hero Banner", icon: Sparkles, description: "Homepage main banner content & imagery" },
+  { id: "stats", label: "Counter Stats", icon: Hash, description: "Animated hero stats (6+ Years, 500+ Clients…)" },
   { id: "sections", label: "Layout & Order", icon: SlidersHorizontal, description: "Reorder or hide homepage sections" },
   { id: "seo", label: "SEO & Social", icon: SearchIcon, description: "Meta titles, descriptions, and share cards" },
   { id: "products", label: "Products", icon: Package, description: "Manage product catalog" },
   { id: "services", label: "Services", icon: Wrench, description: "Edit service offerings" },
   { id: "industries", label: "Industries", icon: Factory, description: "Industries served" },
+  { id: "values", label: "Core Values", icon: Heart, description: "About section value cards" },
+  { id: "why-choose-us", label: "Why Choose Us", icon: CheckSquare, description: "Differentiator cards" },
+  { id: "process", label: "Process Steps", icon: GitBranch, description: "How It Works numbered steps" },
   { id: "testimonials", label: "Testimonials", icon: MessageSquareQuote, description: "Client voices" },
   { id: "insights", label: "Insights", icon: Newspaper, description: "Knowledge center posts" },
   { id: "inquiries", label: "Inquiries", icon: Inbox, description: "Contact form submissions" },
   { id: "settings", label: "Settings", icon: Settings, description: "Company info & social" },
 ];
+
 
 export function AdminPanel() {
   const storeIsAdmin = useContentStore((s) => s.isAdmin);
@@ -269,11 +286,15 @@ export function AdminPanel() {
           <div className="p-6 lg:p-10">
             {view === "dashboard" && <AdminDashboard onNavigate={setView} />}
             {view === "hero" && <AdminHero />}
+            {view === "stats" && <AdminStats />}
             {view === "sections" && <AdminSections />}
             {view === "seo" && <AdminSeo />}
             {view === "products" && <AdminProducts />}
             {view === "services" && <AdminServices />}
             {view === "industries" && <AdminIndustries />}
+            {view === "values" && <AdminValues />}
+            {view === "why-choose-us" && <AdminWhyChooseUs />}
+            {view === "process" && <AdminProcess />}
             {view === "testimonials" && <AdminTestimonials />}
             {view === "insights" && <AdminInsights />}
             {view === "inquiries" && <AdminInquiries />}
