@@ -133,7 +133,7 @@ export const seedCompany: CompanyInfo = {
   tagline: "Your Industrial Partner for Quality, Speed & Support",
   description:
     "UAE-based industrial supplier delivering high-quality industrial equipment, tools, and specialized brushes across the GCC. Reliable supply, competitive pricing, on-time delivery.",
-  foundedYear: 2019,
+  foundedYear: 2025,
   headquarters: "Ajman Free Zone, Ajman, UAE",
   phone: "+971 56 620 2517",
   phoneRaw: "+971566202517",
@@ -148,7 +148,7 @@ export const seedCompany: CompanyInfo = {
 };
 
 export const seedStats: StatItem[] = [
-  { id: "s1", value: 6, suffix: "+", label: "Years of Industrial Supply" },
+  { id: "s1", value: 1, suffix: "+", label: "Years of Industrial Supply" },
   { id: "s2", value: 500, suffix: "+", label: "Active B2B Clients" },
   { id: "s3", value: 1200, suffix: "+", label: "SKUs Supplied" },
   { id: "s4", value: 98, suffix: "%", label: "On-Time Delivery Rate" },
