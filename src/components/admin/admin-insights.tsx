@@ -10,6 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useContentStore, newId } from "@/lib/store";
 import type { InsightPost } from "@/lib/content";
 import { AdminModal, AdminField } from "@/components/admin/admin-shared";
+import { MediaUpload } from "@/components/admin/media-upload";
 
 const blank = (): InsightPost => ({
   id: newId("i"),
@@ -151,9 +152,15 @@ export function AdminInsights() {
               </AdminField>
             </div>
 
-            <AdminField label="Cover Image">
-              <Input value={editing.image} onChange={(e) => update({ image: e.target.value })} />
-              <div className="mt-2 flex flex-wrap gap-1.5">
+            <div>
+              <MediaUpload
+                label="Cover Media / Image"
+                value={editing.image}
+                onChange={(url) => update({ image: url })}
+                hint="Upload from local computer or send to Cloudinary. Supports images and videos."
+              />
+              <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-medium text-muted-foreground">Preset Defaults:</span>
                 {IMAGE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
@@ -169,7 +176,7 @@ export function AdminInsights() {
                   </button>
                 ))}
               </div>
-            </AdminField>
+            </div>
           </div>
         )}
       </AdminModal>

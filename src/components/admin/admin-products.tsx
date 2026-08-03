@@ -11,6 +11,7 @@ import { useContentStore, newId } from "@/lib/store";
 import type { ProductCategory } from "@/lib/content";
 import { Icon } from "@/components/icon";
 import { AdminModal, AdminField, AdminTextInput, IconPicker, StringListEditor } from "@/components/admin/admin-shared";
+import { MediaUpload } from "@/components/admin/media-upload";
 import { toast } from "@/hooks/use-toast";
 
 const blankProduct = (): ProductCategory => ({
@@ -275,44 +276,15 @@ export function AdminProducts() {
               <AdminField label="Icon">
                 <IconPicker value={editing.icon} onChange={(icon) => update({ icon })} />
               </AdminField>
-              <AdminField label="Product Image" hint="Upload from your computer or paste a URL.">
-                {/* Hidden file input */}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
+              <div className="sm:col-span-3">
+                <MediaUpload
+                  label="Product Media / Image"
+                  value={editing.image}
+                  onChange={(url) => update({ image: url })}
+                  hint="Upload from local computer or send to Cloudinary. Supports images and videos."
                 />
-                <div className="flex gap-2">
-                  <AdminTextInput
-                    value={editing.image}
-                    onChange={(e) => update({ image: e.target.value })}
-                    placeholder="/images/products/… or upload below"
-                    className="flex-1"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    className="shrink-0"
-                    disabled={uploading}
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    {uploading ? (
-                      <span className="flex items-center gap-1.5">
-                        <span className="size-3.5 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-                        Uploading…
-                      </span>
-                    ) : (
-                      <span className="flex items-center gap-1.5">
-                        <Upload className="size-3.5" />
-                        Upload
-                      </span>
-                    )}
-                  </Button>
-                </div>
-                <div className="mt-2 flex flex-wrap gap-1.5">
+                <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground">Preset Defaults:</span>
                   {DEFAULT_IMAGE_OPTIONS.map((opt) => (
                     <button
                       key={opt.value}
@@ -328,7 +300,7 @@ export function AdminProducts() {
                     </button>
                   ))}
                 </div>
-              </AdminField>
+              </div>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-3">

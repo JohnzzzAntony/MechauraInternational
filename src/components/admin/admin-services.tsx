@@ -11,6 +11,7 @@ import { useContentStore, newId } from "@/lib/store";
 import type { ServiceItem } from "@/lib/content";
 import { Icon } from "@/components/icon";
 import { AdminModal, AdminField, IconPicker, StringListEditor } from "@/components/admin/admin-shared";
+import { MediaUpload } from "@/components/admin/media-upload";
 
 const blankService = (): ServiceItem => ({
   id: newId("svc"),
@@ -164,9 +165,15 @@ export function AdminServices() {
               <Textarea value={editing.description} onChange={(e) => update({ description: e.target.value })} rows={4} />
             </AdminField>
 
-            <AdminField label="Service Image">
-              <Input value={editing.image} onChange={(e) => update({ image: e.target.value })} />
-              <div className="mt-2 flex flex-wrap gap-1.5">
+            <div>
+              <MediaUpload
+                label="Service Media / Image"
+                value={editing.image}
+                onChange={(url) => update({ image: url })}
+                hint="Upload from local computer or send to Cloudinary. Supports images and videos."
+              />
+              <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] font-medium text-muted-foreground">Preset Defaults:</span>
                 {SERVICE_IMAGE_OPTIONS.map((opt) => (
                   <button
                     key={opt.value}
@@ -182,7 +189,7 @@ export function AdminServices() {
                   </button>
                 ))}
               </div>
-            </AdminField>
+            </div>
 
             <StringListEditor
               label="Features"
