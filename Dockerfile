@@ -45,6 +45,7 @@ RUN addgroup --system --gid 1001 bunjs \
     && adduser --system --uid 1001 nextjs
 
 # Copy built Next.js standalone app
+# Note: .next/standalone/ already contains server.js at its root
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:bunjs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:bunjs /app/.next/static ./.next/static
@@ -53,9 +54,9 @@ COPY --from=builder --chown=nextjs:bunjs /app/.next/static ./.next/static
 COPY --from=prisma --chown=nextjs:bunjs /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=prisma --chown=nextjs:bunjs /app/node_modules/@prisma ./node_modules/@prisma
 
-# Copy Prisma CLI (needed to run db push at startup)
+# Copy the full prisma package (includes build/index.js + ALL .wasm files)
+# Do NOT copy only .bin/prisma — it looks for .wasm files relative to build/index.js
 COPY --from=deps --chown=nextjs:bunjs /app/node_modules/prisma ./node_modules/prisma
-COPY --from=deps --chown=nextjs:bunjs /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
 
 # Copy prisma schema (needed for db push)
 COPY --from=builder --chown=nextjs:bunjs /app/prisma ./prisma
@@ -64,6 +65,7 @@ USER nextjs
 
 EXPOSE 3000
 
-# Run db push at startup then start the Next.js server.
-# `|| true` ensures server starts even if db push fails (e.g. on health checks).
-CMD ["sh", "-c", "timeout 30 ./node_modules/.bin/prisma db push --accept-data-loss --skip-generate || true; exec next start"]
+# Run db push at startup via node (resolves wasm from node_modules/prisma/build/)
+# Use || true so server always starts even if db push fails
+# server.js is the standalone Next.js server created by `next build --output standalone`
+CMD ["sh", "-c", "timeout 30 node node_modules/prisma/build/index.js db push --accept-data-loss --skip-generate || true; exec node server.js"]
