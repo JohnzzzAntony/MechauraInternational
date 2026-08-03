@@ -4,7 +4,7 @@ import * as React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ArrowRight, Sparkles } from "lucide-react";
+import { ArrowUpRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Counter } from "@/components/ui/counter";
@@ -50,8 +50,7 @@ export function HeroSection() {
       .catch(() => {});
   }, []);
 
-  const showBadge = heroData?.showBadge ?? true;
-  const badgeText = heroData?.badgeText ?? "UAE-Based Industrial Supplier · Est. 2019";
+
   const headline = heroData?.headline ?? "Your Industrial Partner for Quality, Speed and Support.";
   const subheadline =
     heroData?.subheadline ??
@@ -108,22 +107,7 @@ export function HeroSection() {
           style={{ y: contentY, opacity: contentOpacity }}
           className="flex flex-col items-center text-center"
         >
-          {/* Eyebrow pill (conditionally rendered) */}
-          {showBadge && (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-              className="glass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-              </span>
-              <span className="text-muted-foreground">{badgeText}</span>
-              <Sparkles className="size-3.5 text-brand" />
-            </motion.div>
-          )}
+
 
           {/* Main headline */}
           <motion.h1
