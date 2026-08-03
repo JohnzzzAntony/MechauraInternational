@@ -7,12 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { MediaUpload } from "@/components/admin/media-upload";
 import { AdminField, AdminTextInput } from "@/components/admin/admin-shared";
 import { toast } from "@/hooks/use-toast";
 
 interface HeroData {
   id: string;
+  badgeText: string;
+  showBadge: boolean;
   headline: string;
   subheadline: string;
   ctaPrimaryText: string;
@@ -21,6 +24,7 @@ interface HeroData {
   ctaSecondaryHref: string;
   backgroundImage: string;
   overlayOpacity: number;
+  showStats: boolean;
 }
 
 export function AdminHero() {
@@ -98,7 +102,7 @@ export function AdminHero() {
             Hero Section Editor
           </h2>
           <p className="text-xs text-muted-foreground">
-            Customize the main banner text, call-to-action buttons, background image, and overlay.
+            Customize the main banner badge, headline, subheadline, CTA buttons, background image, overlay, and stats bar.
           </p>
         </div>
         <Button onClick={handleSave} disabled={saving} variant="brand" className="gap-2">
@@ -114,6 +118,29 @@ export function AdminHero() {
       <div className="grid gap-8 lg:grid-cols-12">
         {/* Form Fields */}
         <div className="space-y-6 lg:col-span-7">
+          {/* Eyebrow Badge Settings */}
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-sm font-semibold text-foreground">Hero Eyebrow Badge</Label>
+                <p className="text-xs text-muted-foreground">Pill badge shown above the main title.</p>
+              </div>
+              <Switch
+                checked={data.showBadge}
+                onCheckedChange={(checked) => setData({ ...data, showBadge: checked })}
+              />
+            </div>
+            {data.showBadge && (
+              <AdminField label="Badge Text">
+                <Input
+                  value={data.badgeText ?? "UAE-Based Industrial Supplier · Est. 2019"}
+                  onChange={(e) => setData({ ...data, badgeText: e.target.value })}
+                  placeholder="UAE-Based Industrial Supplier · Est. 2019"
+                  className="font-medium"
+                />
+              </AdminField>
+            )}
+          </div>
           <AdminField label="Headline" hint="Main title shown on homepage hero banner.">
             <Input
               value={data.headline}
@@ -184,6 +211,18 @@ export function AdminHero() {
               className="w-full accent-brand cursor-pointer"
             />
           </AdminField>
+
+          {/* Stats Bar Toggle */}
+          <div className="rounded-xl border border-border/60 bg-muted/20 p-4 flex items-center justify-between">
+            <div>
+              <Label className="text-sm font-semibold text-foreground">Hero Counter Stats Bar</Label>
+              <p className="text-xs text-muted-foreground">Show counter stats bar below the hero CTAs (6+ Years, 500+ Clients, etc.)</p>
+            </div>
+            <Switch
+              checked={data.showStats ?? true}
+              onCheckedChange={(checked) => setData({ ...data, showStats: checked })}
+            />
+          </div>
         </div>
 
         {/* Live Scaled Preview */}

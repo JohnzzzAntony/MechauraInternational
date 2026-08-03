@@ -49,6 +49,28 @@ async function main() {
   });
   console.log("  ✓ Company");
 
+  // ── Hero Section ────────────────────────────────────────────────────────
+  await prisma.heroSection.upsert({
+    where: { id: "main" },
+    create: {
+      id: "main",
+      badgeText: "UAE-Based Industrial Supplier · Est. 2019",
+      showBadge: true,
+      headline: "Your Industrial Partner for Quality, Speed & Support",
+      subheadline:
+        "UAE-based industrial supplier delivering high-quality industrial equipment, tools, and specialized brushes across the GCC.",
+      ctaPrimaryText: "Request a Quote",
+      ctaPrimaryHref: "/contact",
+      ctaSecondaryText: "Browse Products",
+      ctaSecondaryHref: "/products",
+      backgroundImage: "/images/hero/hero-bg.png",
+      overlayOpacity: 0.55,
+      showStats: true,
+    },
+    update: {},
+  });
+  console.log("  ✓ Hero Section");
+
   // ── Hero Stats ────────────────────────────────────────────────────────
   for (let i = 0; i < seedStats.length; i++) {
     const s = seedStats[i];

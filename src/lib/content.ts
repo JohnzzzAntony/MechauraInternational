@@ -241,7 +241,7 @@ export const seedServices: ServiceItem[] = [
 
 export const seedProducts: ProductCategory[] = [
   {
-    id: "p1",
+    id: "p_dc",
     slug: "dust-collector",
     name: "Dust Collector Manufacturer in UAE",
     shortDescription:
@@ -284,7 +284,7 @@ export const seedProducts: ProductCategory[] = [
     order: 0,
   },
   {
-    id: "p2",
+    id: "p_dcf",
     slug: "dust-collection-filters",
     name: "Dust Collection Filter Manufacturers in UAE",
     shortDescription:

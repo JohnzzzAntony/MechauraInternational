@@ -27,6 +27,43 @@ export function HeroSection() {
   const storeStats = useContentStore((s) => s.heroStats);
   const stats = hydrated && storeStats.length ? storeStats : seedStats;
 
+  const [heroData, setHeroData] = React.useState<{
+    headline?: string;
+    subheadline?: string;
+    ctaPrimaryText?: string;
+    ctaPrimaryHref?: string;
+    ctaSecondaryText?: string;
+    ctaSecondaryHref?: string;
+    backgroundImage?: string;
+    overlayOpacity?: number;
+    badgeText?: string;
+    showBadge?: boolean;
+    showStats?: boolean;
+  } | null>(null);
+
+  React.useEffect(() => {
+    fetch("/api/content/hero")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.error) setHeroData(data);
+      })
+      .catch(() => {});
+  }, []);
+
+  const showBadge = heroData?.showBadge ?? true;
+  const badgeText = heroData?.badgeText ?? "UAE-Based Industrial Supplier · Est. 2019";
+  const headline = heroData?.headline ?? "Your Industrial Partner for Quality, Speed and Support.";
+  const subheadline =
+    heroData?.subheadline ??
+    "Distributing high-quality industrial equipment, precision tools, and specialized brushes across the UAE and wider GCC — engineered for reliability, priced for competitiveness, delivered on schedule.";
+  const ctaPrimaryText = heroData?.ctaPrimaryText ?? "Request a Quote";
+  const ctaPrimaryHref = heroData?.ctaPrimaryHref ?? "/contact";
+  const ctaSecondaryText = heroData?.ctaSecondaryText ?? "Explore Products";
+  const ctaSecondaryHref = heroData?.ctaSecondaryHref ?? "/products";
+  const bgImg = heroData?.backgroundImage || heroImages.background;
+  const overlayOpacity = heroData?.overlayOpacity ?? 0.55;
+  const showStats = heroData?.showStats ?? true;
+
   return (
     <section
       ref={ref}
@@ -41,12 +78,18 @@ export function HeroSection() {
         aria-hidden="true"
       >
         <Image
-          src={heroImages.background}
+          src={bgImg}
           alt=""
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-30"
+          className="object-cover"
+          style={{ opacity: 0.35 }}
+        />
+        {/* Dynamic Dark overlay */}
+        <div
+          className="absolute inset-0 bg-black transition-opacity duration-300"
+          style={{ opacity: overlayOpacity }}
         />
         {/* Dark gradient overlay for legibility */}
         <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/50 to-background" />
@@ -65,22 +108,22 @@ export function HeroSection() {
           style={{ y: contentY, opacity: contentOpacity }}
           className="flex flex-col items-center text-center"
         >
-          {/* Eyebrow pill */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="glass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
-            </span>
-            <span className="text-muted-foreground">
-              UAE-Based Industrial Supplier · Est. 2019
-            </span>
-            <Sparkles className="size-3.5 text-brand" />
-          </motion.div>
+          {/* Eyebrow pill (conditionally rendered) */}
+          {showBadge && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              className="glass mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-medium"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-brand opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-brand" />
+              </span>
+              <span className="text-muted-foreground">{badgeText}</span>
+              <Sparkles className="size-3.5 text-brand" />
+            </motion.div>
+          )}
 
           {/* Main headline */}
           <motion.h1
@@ -89,27 +132,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
             className="font-display max-w-5xl text-balance text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-7xl"
           >
-            Your Industrial Partner for{" "}
-            <span className="relative inline-block">
-              <span className="text-gradient-brand">Quality, Speed</span>
-              <svg
-                viewBox="0 0 300 12"
-                className="absolute -bottom-1 left-0 w-full text-brand"
-                fill="none"
-                aria-hidden="true"
-              >
-                <motion.path
-                  d="M2 8 Q 75 2, 150 6 T 298 4"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 1.2, delay: 0.8, ease: "easeInOut" }}
-                />
-              </svg>
-            </span>{" "}
-            and Support.
+            {headline}
           </motion.h1>
 
           {/* Subtitle */}
@@ -119,9 +142,7 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             className="mt-8 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg lg:text-xl"
           >
-            Distributing high-quality industrial equipment, precision tools, and
-            specialized brushes across the UAE and wider GCC — engineered for
-            reliability, priced for competitiveness, delivered on schedule.
+            {subheadline}
           </motion.p>
 
           {/* CTAs */}
@@ -132,40 +153,42 @@ export function HeroSection() {
             className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
           >
             <Button asChild variant="brand" size="xl" className="w-full sm:w-auto">
-              <Link href="/contact">
-                Request a Quote
+              <Link href={ctaPrimaryHref}>
+                {ctaPrimaryText}
                 <ArrowUpRight className="size-4" />
               </Link>
             </Button>
             <Button asChild variant="outline" size="xl" className="w-full sm:w-auto">
-              <Link href="/products">
-                Explore Products
+              <Link href={ctaSecondaryHref}>
+                {ctaSecondaryText}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
           </motion.div>
 
-          {/* Stats bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-20 grid w-full max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/60 bg-border/60 sm:grid-cols-4"
-          >
-            {stats.map((stat) => (
-              <div
-                key={stat.id}
-                className="bg-background/80 backdrop-blur-sm px-4 py-6 text-center sm:px-6"
-              >
-                <div className="font-display text-3xl font-semibold text-foreground sm:text-4xl">
-                  <Counter value={stat.value} suffix={stat.suffix} />
+          {/* Stats bar (conditionally rendered) */}
+          {showStats && (
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.55, ease: [0.16, 1, 0.3, 1] }}
+              className="mt-20 grid w-full max-w-4xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border/60 bg-border/60 sm:grid-cols-4"
+            >
+              {stats.map((stat) => (
+                <div
+                  key={stat.id}
+                  className="bg-background/80 backdrop-blur-sm px-4 py-6 text-center sm:px-6"
+                >
+                  <div className="font-display text-3xl font-semibold text-foreground sm:text-4xl">
+                    <Counter value={stat.value} suffix={stat.suffix} />
+                  </div>
+                  <div className="mt-1 text-xs text-muted-foreground sm:text-sm">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="mt-1 text-xs text-muted-foreground sm:text-sm">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </motion.div>
+              ))}
+            </motion.div>
+          )}
         </motion.div>
       </Container>
 

@@ -11,6 +11,8 @@ import { db } from "@/lib/db";
 
 const DEFAULTS = {
   id: "main",
+  badgeText: "UAE-Based Industrial Supplier · Est. 2019",
+  showBadge: true,
   headline: "Your Industrial Partner for Quality, Speed & Support",
   subheadline:
     "UAE-based industrial supplier delivering high-quality industrial equipment, tools, and specialized brushes across the GCC.",
@@ -20,6 +22,7 @@ const DEFAULTS = {
   ctaSecondaryHref: "/products",
   backgroundImage: "/images/hero/hero-bg.png",
   overlayOpacity: 0.55,
+  showStats: true,
 };
 
 export async function GET() {

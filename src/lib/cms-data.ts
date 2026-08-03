@@ -39,6 +39,8 @@ export const getHeroSection = unstable_cache(
 
 export const heroDefaults = {
   id: "main",
+  badgeText: "UAE-Based Industrial Supplier · Est. 2019",
+  showBadge: true,
   headline: "Your Industrial Partner for Quality, Speed & Support",
   subheadline:
     "UAE-based industrial supplier delivering high-quality industrial equipment, tools, and specialized brushes across the GCC.",
@@ -48,6 +50,7 @@ export const heroDefaults = {
   ctaSecondaryHref: "/products",
   backgroundImage: "/images/hero/hero-bg.png",
   overlayOpacity: 0.55,
+  showStats: true,
 };
 
 // ─── Section Config ──────────────────────────────────────────────────────────

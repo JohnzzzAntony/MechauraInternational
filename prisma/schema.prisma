@@ -168,6 +168,8 @@ model InsightPost {
 // ───────────────────────────────────────────────
 model HeroSection {
   id               String   @id @default("main")
+  badgeText        String   @default("UAE-Based Industrial Supplier · Est. 2019")
+  showBadge        Boolean  @default(true)
   headline         String   @default("Your Industrial Partner for Quality, Speed & Support")
   subheadline      String   @default("UAE-based industrial supplier delivering high-quality industrial equipment, tools, and specialized brushes across the GCC.")
   ctaPrimaryText   String   @default("Request a Quote")
@@ -176,6 +178,7 @@ model HeroSection {
   ctaSecondaryHref String   @default("/products")
   backgroundImage  String   @default("/images/hero/hero-bg.png")
   overlayOpacity   Float    @default(0.55)
+  showStats        Boolean  @default(true)
   updatedAt        DateTime @updatedAt
 }
 
