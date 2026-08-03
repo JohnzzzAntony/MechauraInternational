@@ -42,8 +42,10 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   images: {
-    unoptimized: true,
+    unoptimized: false,
     remotePatterns: [
+      { protocol: "https", hostname: "res.cloudinary.com" },
+      { protocol: "https", hostname: "*.s3.amazonaws.com" },
       { protocol: "https", hostname: "**" },
     ],
     formats: ["image/avif", "image/webp"],

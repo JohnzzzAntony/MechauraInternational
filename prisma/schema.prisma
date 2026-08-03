@@ -63,16 +63,17 @@ model Value {
 // Services
 // ───────────────────────────────────────────────
 model Service {
-  id          String   @id
-  number      String
-  title       String
-  summary     String
-  description String
-  features    String[]
-  icon        String
-  image       String
-  order       Int      @default(0)
-  updatedAt   DateTime @updatedAt
+  id              String   @id
+  number          String
+  title           String
+  summary         String
+  description     String
+  richDescription String   @default("") // HTML from Tiptap rich-text editor
+  features        String[]
+  icon            String
+  image           String
+  order           Int      @default(0)
+  updatedAt       DateTime @updatedAt
 }
 
 // ───────────────────────────────────────────────
@@ -84,6 +85,7 @@ model Product {
   name                String
   shortDescription    String
   description         String
+  richDescription     String   @default("") // HTML from Tiptap rich-text editor
   applications        String[]
   typicalApplications String[]
   subProducts         String[]
@@ -149,15 +151,56 @@ model Testimonial {
 // Insights / Blog posts
 // ───────────────────────────────────────────────
 model InsightPost {
-  id        String   @id
-  title     String
-  excerpt   String
-  category  String
-  readTime  String
-  date      String
-  image     String
-  order     Int      @default(0)
-  updatedAt DateTime @updatedAt
+  id          String   @id
+  title       String
+  excerpt     String
+  contentBody String   @default("") // Full article HTML from Tiptap
+  category    String
+  readTime    String
+  date        String
+  image       String
+  order       Int      @default(0)
+  updatedAt   DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Hero Section (single row, id = "main")
+// ───────────────────────────────────────────────
+model HeroSection {
+  id               String   @id @default("main")
+  headline         String   @default("Your Industrial Partner for Quality, Speed & Support")
+  subheadline      String   @default("UAE-based industrial supplier delivering high-quality industrial equipment, tools, and specialized brushes across the GCC.")
+  ctaPrimaryText   String   @default("Request a Quote")
+  ctaPrimaryHref   String   @default("/contact")
+  ctaSecondaryText String   @default("Browse Products")
+  ctaSecondaryHref String   @default("/products")
+  backgroundImage  String   @default("/images/hero/hero-bg.png")
+  overlayOpacity   Float    @default(0.55)
+  updatedAt        DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Per-page SEO metadata
+// ───────────────────────────────────────────────
+model PageSeo {
+  id             String   @id // "home" | "about" | "products" | "services" | "industries" | "insights" | "contact"
+  title          String
+  description    String
+  ogImage        String   @default("/images/og/og-image.png")
+  canonicalUrl   String   @default("")
+  noIndex        Boolean  @default(false)
+  structuredData String   @default("") // JSON-LD string blob
+  updatedAt      DateTime @updatedAt
+}
+
+// ───────────────────────────────────────────────
+// Homepage section visibility + display order
+// ───────────────────────────────────────────────
+model SectionConfig {
+  id      String  @id // "hero" | "about" | "services" | "products" | "industries" | "why-choose-us" | "process" | "brands" | "testimonials" | "insights" | "cta" | "contact"
+  visible Boolean @default(true)
+  order   Int     @default(0)
+  label   String  @default("")
 }
 
 // ───────────────────────────────────────────────

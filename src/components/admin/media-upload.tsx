@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Upload, Cloud, HardDrive, Film, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
 
+import { compressImage } from "@/lib/compress-image";
+
 interface MediaUploadProps {
   value: string;
   onChange: (url: string) => void;
@@ -46,16 +48,20 @@ export function MediaUpload({
   }, [value]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
 
     setUploading(true);
     setError(null);
     setSuccess(null);
 
     try {
+      // Compress image client-side if it's an image
+      const compression = await compressImage(rawFile);
+      const fileToUpload = compression.file;
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", fileToUpload);
       formData.append("storage", storage);
 
       const res = await fetch("/api/upload", {

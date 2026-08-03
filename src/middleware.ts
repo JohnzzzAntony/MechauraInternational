@@ -35,14 +35,10 @@ export function middleware(request: NextRequest) {
     }
   }
 
-  // Admin route protection (additional layer)
+  // Admin route protection
   if (request.nextUrl.pathname.startsWith("/admin")) {
-    // Check for admin session cookie or redirect to login
-    const adminAuth = request.cookies.get("admin-auth");
-    if (!adminAuth) {
-      // Allow access - client-side auth will handle it
-      // This is just an additional barrier
-    }
+    const sessionCookie = request.cookies.get("mechaura_admin_session");
+    // If not present, we allow request through and let client-side session gate render the login view
   }
 
   // Security: Prevent access to sensitive files

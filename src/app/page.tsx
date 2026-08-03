@@ -1,7 +1,5 @@
-"use client";
-
 import * as React from "react";
-import { useSearchParams } from "next/navigation";
+import type { Metadata } from "next";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { ScrollProgress } from "@/components/scroll-progress";
@@ -18,11 +16,31 @@ import { TestimonialsSection } from "@/components/sections/testimonials-section"
 import { InsightsSection } from "@/components/sections/insights-section";
 import { CTASection } from "@/components/sections/cta-section";
 import { ContactSection } from "@/components/sections/contact-section";
-import { AdminPanel } from "@/components/admin/admin-panel";
+import { JsonLd } from "@/components/json-ld";
+import { getPageSeo, getCompany } from "@/lib/cms-data";
 
-function HomeLayout() {
+export async function generateMetadata(): Promise<Metadata> {
+  const seo = await getPageSeo("home");
+  return {
+    title: seo.title,
+    description: seo.description,
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      images: seo.ogImage ? [{ url: seo.ogImage }] : undefined,
+    },
+    robots: seo.noIndex ? { index: false } : { index: true, follow: true },
+    alternates: seo.canonicalUrl ? { canonical: seo.canonicalUrl } : undefined,
+  };
+}
+
+export default async function Home() {
+  const company = await getCompany();
+
   return (
     <>
+      <JsonLd type="organization" data={company} />
+      <JsonLd type="website" />
       <ScrollProgress />
       <SiteHeader />
       <main className="flex flex-col">
@@ -42,24 +60,5 @@ function HomeLayout() {
       <SiteFooter />
       <MobileCTA />
     </>
-  );
-}
-
-function HomeContent() {
-  const params = useSearchParams();
-  const isAdmin = params?.get("admin") === "1";
-
-  if (isAdmin) {
-    return <AdminPanel />;
-  }
-
-  return <HomeLayout />;
-}
-
-export default function Home() {
-  return (
-    <React.Suspense fallback={<HomeLayout />}>
-      <HomeContent />
-    </React.Suspense>
   );
 }

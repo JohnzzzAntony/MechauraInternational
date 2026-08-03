@@ -15,6 +15,9 @@ import {
   Eye,
   Lock,
   ArrowLeft,
+  Sparkles,
+  SlidersHorizontal,
+  Search as SearchIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
@@ -27,12 +30,18 @@ import { AdminProducts } from "@/components/admin/admin-products";
 import { AdminServices } from "@/components/admin/admin-services";
 import { AdminIndustries } from "@/components/admin/admin-industries";
 import { AdminTestimonials } from "@/components/admin/admin-testimonials";
+import { AdminHero } from "@/components/admin/admin-hero";
+import { AdminSeo } from "@/components/admin/admin-seo";
+import { AdminSections } from "@/components/admin/admin-sections";
 import { AdminInsights } from "@/components/admin/admin-insights";
 import { AdminCompanySettings } from "@/components/admin/admin-company";
 import { AdminInquiries } from "@/components/admin/admin-inquiries";
 
 type AdminView =
   | "dashboard"
+  | "hero"
+  | "sections"
+  | "seo"
   | "products"
   | "services"
   | "industries"
@@ -43,6 +52,9 @@ type AdminView =
 
 const navItems: { id: AdminView; label: string; icon: typeof LayoutDashboard; description: string }[] = [
   { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, description: "Overview & quick stats" },
+  { id: "hero", label: "Hero Banner", icon: Sparkles, description: "Homepage main banner content & imagery" },
+  { id: "sections", label: "Layout & Order", icon: SlidersHorizontal, description: "Reorder or hide homepage sections" },
+  { id: "seo", label: "SEO & Social", icon: SearchIcon, description: "Meta titles, descriptions, and share cards" },
   { id: "products", label: "Products", icon: Package, description: "Manage product catalog" },
   { id: "services", label: "Services", icon: Wrench, description: "Edit service offerings" },
   { id: "industries", label: "Industries", icon: Factory, description: "Industries served" },
@@ -53,148 +65,135 @@ const navItems: { id: AdminView; label: string; icon: typeof LayoutDashboard; de
 ];
 
 export function AdminPanel() {
-  const isAdmin = useContentStore((s) => s.isAdmin);
-  const login = useContentStore((s) => s.login);
-  const logout = useContentStore((s) => s.logout);
+  const storeIsAdmin = useContentStore((s) => s.isAdmin);
+  const storeLogin = useContentStore((s) => s.login);
+  const storeLogout = useContentStore((s) => s.logout);
   const inquiries = useContentStore((s) => s.inquiries);
   const [view, setView] = React.useState<AdminView>("dashboard");
   const [pwd, setPwd] = React.useState("");
   const [error, setError] = React.useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
+  const [authenticated, setAuthenticated] = React.useState<boolean | null>(null);
 
   const newInquiriesCount = inquiries.filter((i) => i.status === "new").length;
 
-  const handleLogin = (e: React.FormEvent) => {
+  React.useEffect(() => {
+    fetch("/api/admin/session")
+      .then((res) => res.json())
+      .then((data) => setAuthenticated(data.isLoggedIn || storeIsAdmin))
+      .catch(() => setAuthenticated(storeIsAdmin));
+  }, [storeIsAdmin]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const ok = login(pwd);
-    if (!ok) {
-      setError("Incorrect password. Default is Mechaura123 — change it after login.");
-    } else {
-      setPwd("");
+    try {
+      const res = await fetch("/api/admin/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password: pwd }),
+      });
+      if (res.ok) {
+        setAuthenticated(true);
+        storeLogin(pwd);
+        setPwd("");
+      } else {
+        const okLocal = storeLogin(pwd);
+        if (okLocal) {
+          setAuthenticated(true);
+          setPwd("");
+        } else {
+          setError("Incorrect password. Default is Mechaura123");
+        }
+      }
+    } catch {
+      const okLocal = storeLogin(pwd);
+      if (okLocal) {
+        setAuthenticated(true);
+        setPwd("");
+      } else {
+        setError("Incorrect password.");
+      }
     }
   };
 
+  const handleLogout = async () => {
+    await fetch("/api/admin/logout", { method: "POST" }).catch(() => {});
+    storeLogout();
+    setAuthenticated(false);
+    setView("dashboard");
+  };
+
   // ---------- Login gate ----------
-  if (!isAdmin) {
+  if (authenticated === null) {
     return (
-      <div className="relative min-h-screen overflow-hidden bg-background">
-        {/* Animated background */}
-        <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
-          <div className="absolute inset-0 bg-grid bg-grid-fade opacity-40" />
-          <div className="absolute -top-32 left-1/2 -translate-x-1/2 h-[500px] w-[700px] rounded-full bg-brand/15 blur-[120px] animate-pulse-glow" />
-        </div>
-
-        <div className="absolute left-6 top-6">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="size-4" />
-              Back to site
-            </Button>
-          </Link>
-        </div>
-
-        <div className="flex min-h-screen items-center justify-center px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full max-w-md"
-          >
-            <div className="glass rounded-3xl border border-border/60 p-8 shadow-2xl">
-              <div className="flex flex-col items-center text-center">
-                <div className="flex size-16 items-center justify-center rounded-2xl bg-brand/10 text-brand ring-1 ring-brand/30">
-                  <Lock className="size-7" />
-                </div>
-                <h1 className="mt-6 font-display text-2xl font-semibold tracking-tight text-foreground">
-                  Admin Access
-                </h1>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  Sign in to manage Mechaura International&rsquo;s website content.
-                </p>
-              </div>
-
-              <form onSubmit={handleLogin} className="mt-8 space-y-4">
-                <div className="space-y-2">
-                  <Input
-                    id="admin-pwd"
-                    type="password"
-                    value={pwd}
-                    onChange={(e) => setPwd(e.target.value)}
-                    placeholder="Enter password"
-                    autoFocus
-                    autoComplete="current-password"
-                  />
-                </div>
-
-                {error && (
-                  <div
-                    role="alert"
-                    className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-xs text-destructive"
-                  >
-                    Incorrect password. Please try again.
-                  </div>
-                )}
-
-                <Button type="submit" variant="brand" size="lg" className="w-full">
-                  Sign In
-                </Button>
-              </form>
-            </div>
-
-            <div className="mt-6 text-center">
-              <Logo />
-            </div>
-          </motion.div>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="flex items-center gap-3 text-muted-foreground">
+          <div className="size-5 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+          <span className="text-sm font-medium">Checking Admin Session...</span>
         </div>
       </div>
     );
   }
 
-  // ---------- Admin dashboard ----------
+  if (!authenticated) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-brand/5 p-4">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md space-y-6 rounded-2xl border border-border/60 bg-card/80 p-8 shadow-2xl backdrop-blur-xl"
+        >
+          <div className="flex flex-col items-center text-center">
+            <Logo size="lg" />
+            <h1 className="mt-4 font-display text-xl font-semibold tracking-tight">Admin Authentication</h1>
+            <p className="mt-1 text-xs text-muted-foreground">Enter password to access CMS Control Panel.</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <Input
+                type="password"
+                placeholder="Admin Password"
+                value={pwd}
+                onChange={(e) => setPwd(e.target.value)}
+                className="font-mono"
+              />
+            </div>
+            {error && <p className="text-xs text-destructive">{error}</p>}
+            <Button type="submit" variant="brand" className="w-full">
+              Unlock Panel
+            </Button>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Mobile top bar */}
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur-xl lg:hidden">
-        <Logo />
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label="Toggle navigation"
-          onClick={() => setSidebarOpen((s) => !s)}
-        >
-          <LayoutDashboard className="size-5" />
-        </Button>
-      </div>
-
       <div className="flex">
-        {/* Sidebar */}
-        <AnimatePresence>
-          {sidebarOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-        </AnimatePresence>
+        {/* Mobile Header */}
+        <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur-lg lg:hidden">
+          <Logo size="sm" />
+          <Button variant="ghost" size="sm" onClick={() => setSidebarOpen(!sidebarOpen)}>
+            <LayoutDashboard className="size-5" />
+          </Button>
+        </div>
 
+        {/* Sidebar */}
         <aside
           className={cn(
-            "fixed inset-y-0 left-0 z-50 w-72 transform border-r border-border bg-card transition-transform duration-300 lg:translate-x-0",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full",
+            "fixed inset-y-0 left-0 z-50 w-72 transform border-r border-border bg-card/80 backdrop-blur-2xl transition-transform lg:translate-x-0",
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
           )}
         >
           <div className="flex h-full flex-col">
-            <div className="flex items-center justify-between border-b border-border px-6 py-5">
-              <Logo />
-              <Link href="/" className="hidden lg:block">
-                <Button variant="ghost" size="icon" aria-label="Back to site" title="Back to site">
-                  <Eye className="size-4" />
-                </Button>
-              </Link>
+            <div className="border-b border-border p-6">
+              <Logo size="md" />
+              <div className="mt-2 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                CMS Control Workspace
+              </div>
             </div>
 
             <nav className="flex-1 overflow-y-auto p-4" aria-label="Admin">
@@ -213,8 +212,8 @@ export function AdminPanel() {
                         className={cn(
                           "group flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-all",
                           isActive
-                            ? "bg-brand/10 text-brand ring-1 ring-brand/30"
-                            : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                            ? "bg-brand/10 text-brand ring-1 ring-brand/30 font-semibold"
+                            : "text-muted-foreground hover:bg-accent hover:text-foreground"
                         )}
                       >
                         <item.icon className="size-4 shrink-0" />
@@ -232,7 +231,7 @@ export function AdminPanel() {
             </nav>
 
             <div className="border-t border-border p-4 space-y-2">
-              <Link href="/">
+              <Link href="/" target="_blank">
                 <Button variant="outline" size="sm" className="w-full justify-start">
                   <Eye className="size-4" />
                   View Public Site
@@ -242,10 +241,7 @@ export function AdminPanel() {
                 variant="ghost"
                 size="sm"
                 className="w-full justify-start text-muted-foreground hover:text-destructive"
-                onClick={() => {
-                  logout();
-                  setView("dashboard");
-                }}
+                onClick={handleLogout}
               >
                 <LogOut className="size-4" />
                 Sign Out
@@ -256,10 +252,10 @@ export function AdminPanel() {
 
         {/* Main content */}
         <main className="min-h-screen flex-1 lg:ml-72">
-          <div className="border-b border-border bg-background/60 px-6 py-5 backdrop-blur-xl lg:px-10">
+          <div className="border-b border-border bg-background/60 px-6 py-5 backdrop-blur-xl lg:px-10 mt-14 lg:mt-0">
             <div className="flex items-center justify-between">
               <div>
-                <div className="section-tag">Admin</div>
+                <div className="section-tag">Admin CMS</div>
                 <h1 className="mt-1 font-display text-2xl font-semibold tracking-tight text-foreground">
                   {navItems.find((n) => n.id === view)?.label}
                 </h1>
@@ -272,6 +268,9 @@ export function AdminPanel() {
 
           <div className="p-6 lg:p-10">
             {view === "dashboard" && <AdminDashboard onNavigate={setView} />}
+            {view === "hero" && <AdminHero />}
+            {view === "sections" && <AdminSections />}
+            {view === "seo" && <AdminSeo />}
             {view === "products" && <AdminProducts />}
             {view === "services" && <AdminServices />}
             {view === "industries" && <AdminIndustries />}
