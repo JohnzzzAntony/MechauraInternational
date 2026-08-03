@@ -18,7 +18,7 @@ export function StoreHydrator() {
     // Always re-fetch on mount — clears stale localStorage cache
     setHydrated(false);
     hydrate();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []); // mount-once intentional
 
   return null;
 }
