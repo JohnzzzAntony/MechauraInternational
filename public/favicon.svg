@@ -1,6 +1,12 @@
-<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="14" fill="#09090B"/>
-  <path d="M32 12L47 21V39L32 48L17 39V21L32 12Z" fill="#F97316" fill-opacity="0.2" stroke="#F97316" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M20 42V22L32 32L44 22V42" stroke="#F97316" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="32" cy="32" r="3" fill="#F97316"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="mGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E85D04"/>
+      <stop offset="50%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#FF9E0D"/>
+    </linearGradient>
+  </defs>
+  <path d="M 120 400 L 220 180 L 260 270 Z" fill="url(#mGrad)"/>
+  <path d="M 220 400 L 350 180 L 480 400 Z" fill="url(#mGrad)"/>
+  <path d="M 350 300 A 45 45 0 0 1 395 345 A 45 45 0 0 1 305 345 Z" fill="#FFFFFF"/>
 </svg>
