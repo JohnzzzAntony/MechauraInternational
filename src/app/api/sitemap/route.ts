@@ -12,7 +12,7 @@ export async function GET() {
       db.insightPost.findMany({ select: { id: true, updatedAt: true } }),
     ]);
 
-    const staticPages = [
+    const staticPages: { url: string; priority: number; changefreq: string; lastmod?: string }[] = [
       { url: "", priority: 1.0, changefreq: "weekly" },
       { url: "/about", priority: 0.8, changefreq: "monthly" },
       { url: "/services", priority: 0.8, changefreq: "monthly" },

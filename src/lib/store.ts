@@ -203,7 +203,7 @@ export const useContentStore = create<ContentState>()(
           };
 
           const company = getValue<any>(0, {});
-          const heroStats = getValue<StatItem[]>(1, seedHeroStats);
+          const heroStats = getValue<StatItem[]>(1, seedStats);
           const values = getValue<ValueItem[]>(2, seedValues);
           const services = getValue<ServiceItem[]>(3, seedServices);
           const products = getValue<ProductCategory[]>(4, seedProducts);
